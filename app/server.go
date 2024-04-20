@@ -33,7 +33,7 @@ func main() {
 			return
 		}
 		defer conn.Close()
-		conn.Write([]byte("+PONG\r\n"))
+
 		handleConn1(conn)
 
 	}
@@ -41,6 +41,7 @@ func main() {
 }
 
 func handleConn1(conn net.Conn) {
+	conn.Write([]byte("+PONG\r\n"))
 	//defer conn.Close()
 
 	//fmt.Println("Handle connection function")
