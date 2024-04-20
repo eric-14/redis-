@@ -55,7 +55,7 @@ func handleConn1(conn net.Conn) {
 	// iterate through the message to get info PING
 	message := "+PONG\r\n"
 	responseMessage := []byte(message)
-	numberOfPings := 0
+	numberOfPings := 1
 	i := 0
 	for i < n {
 		//fmt.Println("Parsing message ", inputData)
