@@ -45,34 +45,39 @@ func handleConn1(conn net.Conn) {
 	//defer conn.Close()
 
 	//fmt.Println("Handle connection function")
-	inputData := make([]byte, 1024) // buffer to read multiple inputs
 
-	n, error := conn.Read(inputData)
+	for {
 
-	if error != nil {
-		fmt.Println("Error reading bytes")
-		return
-	}
+		inputData := make([]byte, 1024) // buffer to read multiple inputs
 
-	// iterate through the message to get info PING
-	message := "+PONG\r\n"
-	responseMessage := []byte(message)
-	numberOfPings := 1
+		n, error := conn.Read(inputData)
 
-	if n == 0 {
-		return
-	}
-
-	// fmt.Println(string(inputData))
-	for i := 0; i < n; i++ {
-
-		if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
-
-			conn.Write(responseMessage)
-			fmt.Println("Responding with pong ", i, n, numberOfPings)
-
+		if error != nil {
+			fmt.Println("Error reading bytes")
+			return
 		}
+
+		// iterate through the message to get info PING
+		message := "+PONG\r\n"
+		responseMessage := []byte(message)
+		numberOfPings := 1
+
+		if n == 0 {
+			return
+		}
+
+		// fmt.Println(string(inputData))
+		for i := 0; i < n; i++ {
+
+			if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
+
+				conn.Write(responseMessage)
+				fmt.Println("Responding with pong ", i, n, numberOfPings)
+
+			}
+		}
+		conn.Write([]byte("+PONG\r\n"))
+
 	}
-	conn.Write([]byte("+PONG\r\n"))
 
 }
