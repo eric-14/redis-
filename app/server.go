@@ -61,12 +61,14 @@ func handleConn1(conn net.Conn) {
 	if n == 0 {
 		return
 	}
-	for i := 0; i < n; i++ {
+	i := 0
+	for i < n {
 
 		if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
 
 			conn.Write(responseMessage)
 			fmt.Println("Responding with pong ", i, n, numberOfPings)
+			i = 1 + 3
 
 		}
 	}
