@@ -44,7 +44,7 @@ func handleConn1(conn net.Conn) {
 	//defer conn.Close()
 
 	//fmt.Println("Handle connection function")
-	inputData := make([]byte, 100) // buffer to read multiple inputs
+	inputData := make([]byte, 1024) // buffer to read multiple inputs
 
 	n, error := conn.Read(inputData)
 
