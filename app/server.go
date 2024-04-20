@@ -41,7 +41,7 @@ func main() {
 }
 
 func handleConn1(conn net.Conn) {
-	defer conn.Close()
+	//defer conn.Close()
 
 	//fmt.Println("Handle connection function")
 	inputData := make([]byte, 1000) // buffer to read multiple inputs
