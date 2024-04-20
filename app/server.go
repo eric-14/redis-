@@ -57,7 +57,7 @@ func handleConn1(conn net.Conn) {
 	responseMessage := []byte(message)
 	numberOfPings := 0
 	for i := 0; i < n+6; i++ {
-		fmt.Println("Parsing message ", inputData)
+		//fmt.Println("Parsing message ", inputData)
 		if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
 
 			numberOfPings++
