@@ -63,7 +63,7 @@ func handleConn1(conn net.Conn) {
 	}
 	i := 0
 
-	fmt.Println("Received PING", string(inputData))
+	fmt.Println(string(inputData))
 	//for i < n {
 
 	//if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
