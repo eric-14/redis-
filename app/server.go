@@ -56,15 +56,10 @@ func handleConn1(conn net.Conn) {
 	message := "+PONG\r\n"
 	responseMessage := []byte(message)
 	numberOfPings := 1
-	i := 0
-	for i < n {
+
+	for i := 0; i < n; i++ {
 		//fmt.Println("Parsing message ", inputData)
 		if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
-
-			numberOfPings++
-			i = i + 3
-
-			fmt.Println("number of Pings ", numberOfPings)
 
 			//send equivalent number of pongs as pings
 			conn.Write(responseMessage)
