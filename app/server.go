@@ -29,7 +29,7 @@ func main() {
 		conn, error := listener.Accept()
 
 		if error != nil {
-			log.Fatal("Failed to accept new clients in the TCP server \n")
+			fmt.Println("Failed to accept new clients in the TCP server ")
 			return
 		}
 
@@ -43,7 +43,7 @@ func handleConn1(conn net.Conn) {
 	//defer conn.Close()
 
 	//fmt.Println("Handle connection function")
-	inputData := make([]byte, 100) // buffer to read multiple inputs
+	inputData := make([]byte, 1000) // buffer to read multiple inputs
 
 	n, error := conn.Read(inputData)
 
@@ -60,23 +60,10 @@ func handleConn1(conn net.Conn) {
 	for i := 0; i < n; i++ {
 
 		if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
-			fmt.Println("Parsing message ", string(inputData[:i+4]))
-			//send equivalent number of pongs as pings
-			// conn.Write(responseMessage)
-			// fmt.Println("Responding with pong", i, n)
 
-			for j := 0; j < numberOfPings; j++ {
-				conn.Write(responseMessage)
-				fmt.Println("Responding with pong ", i, n, numberOfPings)
-			}
+			conn.Write(responseMessage)
+			fmt.Println("Responding with pong ", i, n, numberOfPings)
 
-			/*
-				after responding to the first ping
-				continue will restart the loop and after reading the second ping
-				the client will receive another PONG
-			*/
-			i++
-			continue
 		}
 	}
 
