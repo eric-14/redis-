@@ -40,7 +40,7 @@ func main() {
 }
 
 func handleConn1(conn net.Conn) {
-	defer conn.Close()
+	//defer conn.Close()
 
 	//fmt.Println("Handle connection function")
 	inputData := make([]byte, 15) // buffer to read multiple inputs
@@ -67,7 +67,7 @@ func handleConn1(conn net.Conn) {
 				continue will restart the loop and after reading the second ping
 				the client will receive another PONG
 			*/
-			break
+			return
 		}
 	}
 
