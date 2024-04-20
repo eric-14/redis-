@@ -32,10 +32,9 @@ func main() {
 			fmt.Println("Failed to accept new clients in the TCP server ")
 			return
 		}
-
+		defer conn.Close()
 		handleConn1(conn)
 
-		//defer conn.Close()
 	}
 
 }
