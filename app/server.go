@@ -53,14 +53,14 @@ func main(){
 			return 
 		}
 
-		handleConn(conn)
+		handleConn1(conn)
 		defer conn.Close()
 }
 }
 
 
 
-func handleConn(conn net.Conn){
+func handleConn1(conn net.Conn){
 	defer conn.Close()
 
 	inputData := make([]byte, 1024)
