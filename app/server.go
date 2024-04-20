@@ -33,20 +33,20 @@ func main() {
 			return
 		}
 
-		handleConn1(conn)
+		handleConn1(&conn)
 
 		//defer conn.Close()
 	}
 
 }
 
-func handleConn1(conn net.Conn) {
+func handleConn1(conn *net.Conn) {
 	//defer conn.Close()
 
 	//fmt.Println("Handle connection function")
 	inputData := make([]byte, 1024) // buffer to read multiple inputs
 
-	n, error := conn.Read(inputData)
+	n, error := (*conn).Read(inputData)
 
 	if error != nil {
 		fmt.Println("Error reading bytes")
@@ -66,7 +66,7 @@ func handleConn1(conn net.Conn) {
 
 		if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
 
-			conn.Write(responseMessage)
+			(*conn).Write(responseMessage)
 			fmt.Println("Responding with pong ", i, n, numberOfPings)
 			i = 1 + 3
 
