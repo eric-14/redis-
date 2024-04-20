@@ -59,10 +59,10 @@ func handleConn1(conn net.Conn) {
 	i := 0
 	for i < n {
 		//fmt.Println("Parsing message ", inputData)
-		if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' && inputData[i+4] == '\n' { //PING MESSAGE
+		if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
 
 			numberOfPings++
-			i = i + 4
+			i = i + 3
 
 			fmt.Println("number of Pings ", numberOfPings)
 
