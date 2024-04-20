@@ -17,18 +17,16 @@ func main() {
 	listener, err := net.Listen(TYPE1, HOST1+":"+PORT1)
 
 	if err != nil {
-
 		fmt.Println("Failed to open a TCP port", err)
 		log.Fatal(err)
-
 		os.Exit(1)
 	}
 	defer listener.Close()
 	for {
 
-		conn, error := listener.Accept()
+		conn, err := listener.Accept()
 
-		if error != nil {
+		if err != nil {
 			fmt.Println("Failed to accept new clients in the TCP server ")
 			return
 		}
