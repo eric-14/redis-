@@ -74,7 +74,7 @@ func handleConn1(conn net.Conn) {
 
 			}
 		}
-		conn.Write([]byte("+PONG\r\n"))
+		//conn.Write([]byte("+PONG\r\n"))
 
 	}
 
