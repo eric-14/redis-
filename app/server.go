@@ -43,7 +43,7 @@ func handleConn1(conn net.Conn) {
 	//defer conn.Close()
 
 	//fmt.Println("Handle connection function")
-	inputData := make([]byte, 15) // buffer to read multiple inputs
+	inputData := make([]byte, 100) // buffer to read multiple inputs
 
 	n, error := conn.Read(inputData)
 
@@ -55,19 +55,23 @@ func handleConn1(conn net.Conn) {
 	// iterate through the message to get info PING
 	message := "+PONG\r\n"
 	responseMessage := []byte(message)
-
+	numberOfPings := 0
 	for i := 0; i < n+6; i++ {
 		fmt.Println("Parsing message ", inputData)
 		if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
-			conn.Write(responseMessage)
-			fmt.Println("Responding with pong", i, n)
 
+			numberOfPings++
+			for j := 0; j < numberOfPings; j++ {
+				//send equivalent number of pongs as pings
+				conn.Write(responseMessage)
+				fmt.Println("Responding with pong", i, n)
+			}
 			/*
 				after responding to the first ping
 				continue will restart the loop and after reading the second ping
 				the client will receive another PONG
 			*/
-			return
+			continue
 		}
 	}
 
