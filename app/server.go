@@ -43,7 +43,7 @@ func handleConn1(conn net.Conn) {
 	defer conn.Close()
 
 	fmt.Println("Handle connection function")
-	inputData := make([]byte, 1024)
+	inputData := make([]byte, 20)
 
 	n, error := conn.Read(inputData)
 
@@ -58,7 +58,7 @@ func handleConn1(conn net.Conn) {
 
 	for i := 0; i < n; i++ {
 		fmt.Println("Parsing message ", inputData)
-		if inputData[i] == 'P' && inputData[i+1] == 'I' && inputData[i+2] == 'N' && inputData[i+3] == 'G' { //PING MESSAGE
+		if inputData[i] == 'p' && inputData[i+1] == '1' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
 			conn.Write(responseMessage)
 		}
 	}
