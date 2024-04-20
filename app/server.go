@@ -67,7 +67,7 @@ func handleConn1(conn net.Conn) {
 
 			for j := 0; j < numberOfPings; j++ {
 				conn.Write(responseMessage)
-				fmt.Println("Responding with pong 1", i, n)
+				fmt.Println("Responding with pong ", i, n, numberOfPings)
 			}
 
 			/*
