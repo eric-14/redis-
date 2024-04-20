@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	HOST = "localhost"
-	PORT = "8080"
-	TYPE = "TCP"
+	HOST1 = "localhost"
+	PORT1 = "8080"
+	TYPE1 = "TCP"
 )
 
 /*
@@ -36,7 +36,7 @@ func main() {
 */
 
 func main(){
-	listener, err := net.Listen(TYPE, HOST+":"+PORT)
+	listener, err := net.Listen(TYPE1, HOST1+":"+PORT1)
 
 	if err != nil {
 		log.Fatal(err)
