@@ -53,7 +53,7 @@ func handleConn1(conn net.Conn) {
 	}
 
 	// iterate through the message to get info PING
-	message := "pong\r\n"
+	message := "+pong\r\n"
 	responseMessage := []byte(message)
 
 	for i := 0; i < n; i++ {
