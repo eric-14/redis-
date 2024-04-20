@@ -17,57 +17,65 @@ func main() {
 	listener, err := net.Listen(TYPE1, HOST1+":"+PORT1)
 
 	if err != nil {
-
 		fmt.Println("Failed to open a TCP port", err)
 		log.Fatal(err)
-
 		os.Exit(1)
 	}
 	defer listener.Close()
 	for {
 
-		conn, error := listener.Accept()
+		conn, err := listener.Accept()
 
-		if error != nil {
-			log.Fatal("Failed to accept new clients in the TCP server \n")
+		if err != nil {
+			fmt.Println("Failed to accept new clients in the TCP server ")
 			return
 		}
-
-		handleConn1(conn)
 		defer conn.Close()
+
+		go handleConn1(conn)
+
 	}
 
 }
 
 func handleConn1(conn net.Conn) {
-	defer conn.Close()
 
-	fmt.Println("Handle connection function")
-	inputData := make([]byte, 1024) // buffer to read multiple inputs
+	//defer conn.Close()
 
-	n, error := conn.Read(inputData)
+	//fmt.Println("Handle connection function")
 
-	if error != nil {
-		fmt.Println("Error reading bytes")
-		return
-	}
+	for {
 
-	// iterate through the message to get info PING
-	message := "+PONG\r\n"
-	responseMessage := []byte(message)
+		inputData := make([]byte, 1024) // buffer to read multiple inputs
 
-	for i := 0; i < n; i++ {
-		//fmt.Println("Parsing message ", inputData)
-		if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
-			conn.Write(responseMessage)
-			fmt.Println("Responding with pong")
-			/*
-				after responding to the first ping
-				continue will restart the loop and after reading the second ping
-				the client will receive another PONG
-			*/
-			continue
+		n, error := conn.Read(inputData)
+
+		if error != nil {
+			fmt.Println("Error reading bytes")
+			return
 		}
+
+		// iterate through the message to get info PING
+		message := "+PONG\r\n"
+		responseMessage := []byte(message)
+		numberOfPings := 1
+
+		if n == 0 {
+			return
+		}
+
+		// fmt.Println(string(inputData))
+		for i := 0; i < n; i++ {
+
+			if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
+
+				conn.Write(responseMessage)
+				fmt.Println("Responding with pong ", i, n, numberOfPings)
+
+			}
+		}
+		//conn.Write([]byte("+PONG\r\n"))
+
 	}
 
 }
