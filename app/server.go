@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"sync"
 )
 
 const (
@@ -32,14 +33,17 @@ func main() {
 			fmt.Println("Failed to accept new clients in the TCP server ")
 			return
 		}
+		var wt sync.WaitGroup
+		wt.Add(3)
 
-		handleConn1(conn)
+		go handleConn1(conn, wt)
+		wt.Wait()
 		defer conn.Close()
 	}
 
 }
 
-func handleConn1(conn net.Conn) {
+func handleConn1(conn net.Conn, wt sync.WaitGroup) {
 	//defer conn.Close()
 
 	//fmt.Println("Handle connection function")
@@ -66,5 +70,6 @@ func handleConn1(conn net.Conn) {
 
 		}
 	}
+	wt.Done()
 
 }
