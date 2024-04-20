@@ -66,7 +66,7 @@ func handleConn1(conn net.Conn) {
 				continue will restart the loop and after reading the second ping
 				the client will receive another PONG
 			*/
-			continue
+			//continue
 		}
 	}
 
