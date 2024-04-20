@@ -65,11 +65,16 @@ func handleConn1(conn net.Conn) {
 			i = i + 4
 
 			fmt.Println("number of Pings ", numberOfPings)
+
+			//send equivalent number of pongs as pings
+			conn.Write(responseMessage)
+			fmt.Println("Responding with pong", i, n)
+
 			for j := 0; j < numberOfPings; j++ {
-				//send equivalent number of pongs as pings
 				conn.Write(responseMessage)
-				fmt.Println("Responding with pong", i, n)
+				fmt.Println("Responding with pong 1", i, n)
 			}
+
 			/*
 				after responding to the first ping
 				continue will restart the loop and after reading the second ping
