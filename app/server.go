@@ -63,6 +63,8 @@ func handleConn1(conn net.Conn) {
 
 			numberOfPings++
 			i = i + 4
+
+			fmt.Println("number of Pings ", numberOfPings)
 			for j := 0; j < numberOfPings; j++ {
 				//send equivalent number of pongs as pings
 				conn.Write(responseMessage)
