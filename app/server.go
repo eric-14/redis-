@@ -42,8 +42,8 @@ func main() {
 func handleConn1(conn net.Conn) {
 	defer conn.Close()
 
-	fmt.Println("Handle connection function")
-	inputData := make([]byte, 1024) // buffer to read multiple inputs
+	//fmt.Println("Handle connection function")
+	inputData := make([]byte, 20) // buffer to read multiple inputs
 
 	n, error := conn.Read(inputData)
 
@@ -57,7 +57,7 @@ func handleConn1(conn net.Conn) {
 	responseMessage := []byte(message)
 
 	for i := 0; i < n; i++ {
-		//fmt.Println("Parsing message ", inputData)
+		fmt.Println("Parsing message ", inputData)
 		if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
 			conn.Write(responseMessage)
 			fmt.Println("Responding with pong")
