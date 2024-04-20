@@ -56,9 +56,7 @@ func handleConn1(conn net.Conn) {
 	message := "+PONG\r\n"
 	responseMessage := []byte(message)
 
-	var i int = 0
-
-	for i = 0; i < n; i++ {
+	for i := 0; i < n; i++ {
 		//fmt.Println("Parsing message ", inputData)
 		if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
 			conn.Write(responseMessage)
@@ -69,7 +67,7 @@ func handleConn1(conn net.Conn) {
 				continue will restart the loop and after reading the second ping
 				the client will receive another PONG
 			*/
-			continue
+			break
 		}
 	}
 
