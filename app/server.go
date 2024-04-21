@@ -159,13 +159,12 @@ func ParseString(input []byte) (string, error) {
 
 func ParseArray(input []byte) ([]string, error) {
 	//function to parse array elements
-	fmt.Println("Parsing array elements")
 
 	element := []string{}
 
 	if input[0] == '*' {
 		//this is an array
-		fmt.Println("Inside function parsed Array len", string(rune(input[1])))
+		//fmt.Println("Inside function parsed Array len", string(rune(input[1])))
 		len1 := string(rune(input[1]))
 		len2, _ := strconv.ParseInt(len1, 10, 64) //number of items in the array
 
@@ -179,8 +178,11 @@ func ParseArray(input []byte) ([]string, error) {
 			for i := 0; i < int(len2); i++ {
 				// iterate over the array elements
 				//parse String returns the element i
-				fmt.Println("Line 182 ", string(input[4:]))
+				//fmt.Println("Line 182 ", string(input[4:]))
 				element1, err := ParseString(input[4:])
+
+				fmt.Println("line 183 ", element1)
+
 				if err != nil {
 					fmt.Println("Failed to parse string ")
 				}
