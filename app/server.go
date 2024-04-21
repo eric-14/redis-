@@ -79,7 +79,7 @@ func handleConn1(conn net.Conn) {
 
 				conn.Write([]byte("PONG\r\n"))
 				fmt.Println("Responding with pong ", i, n)
-
+				return
 			}
 		}
 		//conn.Write([]byte("+PONG\r\n"))
