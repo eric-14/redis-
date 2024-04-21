@@ -186,6 +186,7 @@ func ParseArray(input []byte) ([]string, error) {
 				element = append(element, element1)
 
 			}
+			fmt.Println("inside func array array is ", element)
 
 		}
 
