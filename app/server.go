@@ -132,6 +132,7 @@ func ParseString(input1 []byte) (string, error) {
 	for i < 20 {
 		fmt.Println("Inside the FUNC parseString ", i)
 		if input1[0+i] == '$' {
+			fmt.Println("Bulk string is TRUE")
 			//this is a bulk string
 
 			slen := string(rune(input1[1+1]))
