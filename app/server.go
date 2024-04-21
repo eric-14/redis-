@@ -118,7 +118,7 @@ func RESPParser(input []byte) (string, error) {
 	}
 	fmt.Println("Resp Parser response ", response)
 
-	result := reponsePrefix + string(response) + response + responsePostfix
+	result := reponsePrefix + "4" + response + responsePostfix
 
 	return result, nil
 
