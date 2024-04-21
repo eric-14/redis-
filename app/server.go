@@ -148,7 +148,7 @@ func ParseString(input []byte) (string, error) {
 
 		// }
 
-		string1 = string(input[4; : 5+len])
+		string1 = string(input[4 : 5+len])
 		fmt.Println("Inside parse string function ", string1)
 
 	} else {
