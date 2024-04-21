@@ -169,11 +169,11 @@ func ParseArray(input []byte) ([]string, error) {
 			//parse String returns the element i
 			//fmt.Println("Line 182 ", string(input[4:]))
 
-			fmt.Println("line 183 ", i, string(input[4+i:]))
+			fmt.Println("line 183 ", i, string(input[4+i*3:]))
 
 			element1, err := ParseString(input[4+i*3:])
 
-			fmt.Println("line 183 ", i, element1)
+			//fmt.Println("line 183 ", i, element1)
 
 			if err != nil {
 				fmt.Println("Failed to parse string ")
