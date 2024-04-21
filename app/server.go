@@ -123,6 +123,8 @@ func RESPParser(input []byte) (string, error) {
 }
 
 func ParseString(input []byte) (string, error) {
+
+	fmt.Println("function string values ", string(input))
 	// function to parse strings
 	string1 := ""
 	if input[0] == '$' {
