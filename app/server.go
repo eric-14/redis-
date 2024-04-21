@@ -133,7 +133,7 @@ func ParseString(input1 []byte) (string, error) {
 	for {
 		if input1[0] == '$' {
 			//this is a bulk string
-			//
+
 			slen := string(rune(input1[1]))
 			len, _ := strconv.ParseInt(slen, 10, 64)
 
@@ -174,6 +174,9 @@ func ParseArray(input []byte) ([]string, error) {
 			// iterate over the array elements
 			//parse String returns the element i
 			//fmt.Println("Line 182 ", string(input[4:]))
+
+			fmt.Println("line 183 ", i)
+
 			element1, err := ParseString(input[4+i:])
 
 			fmt.Println("line 183 ", i, element1)
