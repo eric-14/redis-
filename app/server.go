@@ -156,6 +156,7 @@ func ParseArray(input []byte) ([]string, error) {
 
 	if input[0] == '*' {
 		//this is an array
+		fmt.Println("Inside function parsed Array len", input[1])
 		len := int(input[1]) //number of items in the array
 
 		// pos 2 -- \r
