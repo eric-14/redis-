@@ -130,7 +130,7 @@ func ParseString(input1 []byte) (string, error) {
 	string1 := ""
 	i := 0
 	for i < 20 {
-		fmt.Println("Inside the FUNC parseString ", i)
+		//fmt.Println("Inside the FUNC parseString ", i)
 		if input1[0+i] == '$' {
 
 			//this is a bulk string
