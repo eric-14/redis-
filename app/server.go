@@ -148,8 +148,8 @@ func ParseString(input1 []byte) (string, error) {
 
 		// }
 
-		string1 = string(input1[4:len])
-		fmt.Println("Inside parse string function ", string1)
+		string1 = string(input1[4 : 4+len])
+		fmt.Println("String1", string1)
 
 	} else {
 		return "", errors.New("From Parse String input not bulk string ")
