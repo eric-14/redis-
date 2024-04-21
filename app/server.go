@@ -143,9 +143,10 @@ func ParseString(input1 []byte) (string, error) {
 			string1 = string(input1[4 : 4+len])
 			fmt.Println("String1", string1)
 			return string1, nil
-		} else {
-			return "", errors.New("From Parse String input not bulk string ")
 		}
+		// else {
+		// 	return "", errors.New("From Parse String input not bulk string ")
+		// }
 	}
 
 }
