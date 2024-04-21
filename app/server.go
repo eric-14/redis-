@@ -171,7 +171,7 @@ func ParseArray(input []byte) ([]string, error) {
 
 		//pos 2 -- \r
 		//pos 3 -- \n
-		j := 3
+		j := 4
 		//iterate upto \r\n to find the first element
 		//append the element to the arrays
 		if input[j] == '$' {
@@ -179,6 +179,7 @@ func ParseArray(input []byte) ([]string, error) {
 			for i := 0; i < int(len2); i++ {
 				// iterate over the array elements
 				//parse String returns the element i
+				fmt.Println("Line 182 ", string(input[4:]))
 				element1, err := ParseString(input[4:])
 				if err != nil {
 					fmt.Println("Failed to parse string ")
