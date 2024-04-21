@@ -131,7 +131,7 @@ func ParseString(input []byte) (string, error) {
 		//this is a bulk string
 		//
 		len := int(input[1])
-		fmt.Println("Inside bulk strings ", int(input[1]))
+		fmt.Println("Inside bulk strings ", input[1])
 		// \r -3
 		// \n - 4
 
