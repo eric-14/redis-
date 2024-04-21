@@ -72,21 +72,6 @@ func handleConn1(conn net.Conn) {
 			fmt.Println("Error to run function RESPParser")
 		}
 		conn.Write([]byte(writeResponse))
-		// fmt.Println(string(inputData))
-
-		//conn.Write([]byte("+PONG\r\n"))
-
-		// for i := 0; i < n; i++ {
-
-		// 	if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
-
-		// 		conn.Write([]byte("$" + "4\r\n" + "PONG\r\n"))
-		// 		//fmt.Println("Responding with pong ", i, n)
-
-		// 		return
-		// 	}
-
-		// }
 
 	}
 
@@ -124,8 +109,8 @@ func RESPParser(input []byte) (string, error) {
 	}
 	//fmt.Println("Resp Parser response ", response)
 	a := len(parsedData) // length of the array
-
-	result := reponsePrefix + string(len(parsedData[a-1])) + parsedData[a-1] + responsePostfix
+	fmt.Println("Length of parsedData is a ", a)
+	result := reponsePrefix + string(len(parsedData[a-1])) + "\r\n" + parsedData[a-1] + responsePostfix
 
 	fmt.Println("The result of the operation is ", result)
 	return result, nil
