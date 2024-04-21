@@ -128,18 +128,20 @@ func ParseString(input1 []byte) (string, error) {
 	//fmt.Println("function string values ", string(input))
 	// function to parse strings
 	string1 := ""
+	for {
+		if input1[0] == '$' {
+			//this is a bulk string
 
-	if input1[0] == '$' {
-		//this is a bulk string
+			slen := string(rune(input1[1]))
+			len, _ := strconv.ParseInt(slen, 10, 64)
 
-		slen := string(rune(input1[1]))
-		len, _ := strconv.ParseInt(slen, 10, 64)
+			// \r -3
+			// \n - 4
 
-		// \r -3
-		// \n - 4
-
-		string1 = string(input1[4 : 4+len])
-		fmt.Println("String1", string1)
+			string1 = string(input1[4 : 4+len])
+			fmt.Println("String1", string1)
+			break
+		}
 
 	}
 
@@ -167,7 +169,7 @@ func ParseArray(input []byte) ([]string, error) {
 			//parse String returns the element i
 			//fmt.Println("Line 182 ", string(input[4:]))
 
-			//fmt.Println("line 183 ", i, string(input[4+i:]))
+			fmt.Println("line 183 ", i, string(input[4+i:]))
 
 			element1, err := ParseString(input[4+i:])
 
