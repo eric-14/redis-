@@ -133,14 +133,14 @@ func ParseString(input1 []byte) (string, error) {
 		if input1[0+i] == '$' {
 			//this is a bulk string
 
-			slen := string(rune(input1[1]))
+			slen := string(rune(input1[1+1]))
 			len, _ := strconv.ParseInt(slen, 10, 64)
 
 			// \r -3
 			// \n - 4
 
-			string1 = string(input1[4 : 4+len])
-			fmt.Println("String1", len, string1)
+			string1 = string(input1[4+i : 4+int(len)+i])
+			fmt.Println("Parse String String1", len, string1)
 			break
 		}
 		i++
