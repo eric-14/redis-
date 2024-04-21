@@ -109,7 +109,7 @@ func RESPParser(input []byte) (string, error) {
 	}
 	//fmt.Println("Resp Parser response ", response)
 	a := len(parsedData) // length of the array
-	fmt.Println("Length of parsedData is a ", a)
+	fmt.Println("Length of parsedData is len(parsedData[a-1]) ", len(parsedData[a-1]))
 	result := reponsePrefix + string(len(parsedData[a-1])) + "\r\n" + parsedData[a-1] + responsePostfix
 
 	fmt.Println("The result of the operation is ", result)
