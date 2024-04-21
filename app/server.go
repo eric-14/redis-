@@ -34,7 +34,7 @@ func main() {
 		}
 		defer conn.Close()
 
-		go handleConn1(conn)
+		handleConn1(conn)
 
 	}
 
