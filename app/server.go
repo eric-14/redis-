@@ -115,7 +115,7 @@ func RESPParser(input []byte) (string, error) {
 		if parsedData[i] == "echo" {
 			echoFlag = true
 		} else if parsedData[i] == "ping" {
-			return "$4\r\n PONG\r\n", nil
+			return "$4\r\nPONG\r\n", nil
 		}
 		if echoFlag == true {
 			response = response + string(parsedData[i])
