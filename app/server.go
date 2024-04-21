@@ -125,15 +125,15 @@ func RESPParser(input []byte) (string, error) {
 
 }
 
-func ParseString(input []byte) (string, error) {
+func ParseString(input1 []byte) (string, error) {
 
 	//fmt.Println("function string values ", string(input))
 	// function to parse strings
 	string1 := ""
-	if input[0] == '$' {
+	if input1[0] == '$' {
 		//this is a bulk string
 		//
-		slen := string(rune(input[1]))
+		slen := string(rune(input1[1]))
 		len, _ := strconv.ParseInt(slen, 10, 64)
 
 		// \r -3
@@ -148,7 +148,7 @@ func ParseString(input []byte) (string, error) {
 
 		// }
 
-		string1 = string(input[4 : 5+len])
+		string1 = string(input1[4:len])
 		fmt.Println("Inside parse string function ", string1)
 
 	} else {
