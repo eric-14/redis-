@@ -139,7 +139,7 @@ func ParseString(input1 []byte) (string, error) {
 			// \n - 4
 
 			string1 = string(input1[4 : 4+len])
-			fmt.Println("String1", string1)
+			fmt.Println("String1", len, string1)
 			break
 		}
 
