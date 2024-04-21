@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"strconv"
 )
 
 const (
@@ -130,12 +131,14 @@ func ParseString(input []byte) (string, error) {
 	if input[0] == '$' {
 		//this is a bulk string
 		//
-		len := int(rune(input[1]))
-		fmt.Println("Inside bulk strings ", string(rune(input[1])))
+		slen := string(rune(input[1]))
+		len, _ := strconv.ParseInt(slen, 10, 64)
+
+		fmt.Println("Inside bulk strings ", len)
 		// \r -3
 		// \n - 4
 
-		for i := 0; i < len; i++ {
+		for i := 0; i < int(len); i++ {
 
 			//appending characters to form the first
 			string1 = string1 + string(input[i])
@@ -157,7 +160,8 @@ func ParseArray(input []byte) ([]string, error) {
 	if input[0] == '*' {
 		//this is an array
 		fmt.Println("Inside function parsed Array len", string(rune(input[1])))
-		len := int(input[1]) //number of items in the array
+		len1 := string(rune(input[1]))
+		len2, _ := strconv.ParseInt(len1, 10, 64) //number of items in the array
 
 		// pos 2 -- \r
 		//pos 3 -- \n
@@ -166,7 +170,7 @@ func ParseArray(input []byte) ([]string, error) {
 		//append the element to the arrays
 		if input[j] == '$' {
 			//next element is a bulk string
-			for i := 0; i < len; i++ {
+			for i := 0; i < int(len2); i++ {
 				// iterate over the array elements
 				//parse String returns the element i
 				element1, err := ParseString(input[4:])
