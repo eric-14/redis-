@@ -130,8 +130,9 @@ func ParseString(input1 []byte) (string, error) {
 	//fmt.Println("function string values ", string(input))
 	// function to parse strings
 	string1 := ""
+	i := 0
 	for {
-		if input1[0] == '$' {
+		if input1[0+i] == '$' {
 			//this is a bulk string
 
 			slen := string(rune(input1[1]))
@@ -142,12 +143,13 @@ func ParseString(input1 []byte) (string, error) {
 
 			string1 = string(input1[4 : 4+len])
 			fmt.Println("String1", string1)
-			return string1, nil
+			i++
 		}
 		// else {
 		// 	return "", errors.New("From Parse String input not bulk string ")
 		// }
 	}
+	return string1, nil
 
 }
 
