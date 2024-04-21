@@ -79,3 +79,58 @@ func handleConn1(conn net.Conn) {
 	}
 
 }
+
+func echoParser(input []byte) {
+	//accepts input as byte and should reply with the same message
+
+	echoFlag := false
+
+	reponsePrefix := "$3\r\n" // number of characters in the prefix are 6
+	responsePostfix := "\r\n" // number of characters in the postfix are 4
+	response := ""
+
+	for i := 0; i < len(input); i++ {
+
+		/*
+			In ascii tables capital letters are from 65 - 90
+			and small caps are fromm 97 - 122
+
+			so in this code we will use small letters
+			if a character is capital we convert it to small by adding 32
+		*/
+
+		if int(input[i]) >= 65 && int(input[i]) <= 90 {
+			value := int(input[i]) + 32
+			input[i] = byte(value)
+		} // all strings are now converted to small caps
+
+	}
+
+	for i := 0; i < len(input); i++ {
+
+		//now find the echo message
+		if input[i] == 'e' && input[i+1] == 'c' && input[i+2] == 'h' && input[i+3] == 'o' {
+			//received an echo command shouldd reply with the same message
+			echoFlag = true
+
+		}
+
+		if echoFlag == true {
+			// finding string.
+			for j := i + 1; j < len(input); j++ {
+				if input[j] >= 48 && input[j] <= 90 {
+					//message must be an alphabet or number, : ,; < , = > , ? @, ^
+					response = string(input[j])
+				}
+
+				if input[j] == '\r' || input[j] == '\n' {
+					break
+					//this is not the string
+				}
+			}
+
+		}
+
+	}
+
+}
