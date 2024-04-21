@@ -76,17 +76,17 @@ func handleConn1(conn net.Conn) {
 
 		//conn.Write([]byte("+PONG\r\n"))
 
-		for i := 0; i < n; i++ {
+		// for i := 0; i < n; i++ {
 
-			if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
+		// 	if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
 
-				conn.Write([]byte("$" + "4\r\n" + "PONG\r\n"))
-				//fmt.Println("Responding with pong ", i, n)
+		// 		conn.Write([]byte("$" + "4\r\n" + "PONG\r\n"))
+		// 		//fmt.Println("Responding with pong ", i, n)
 
-				return
-			}
+		// 		return
+		// 	}
 
-		}
+		// }
 
 	}
 
