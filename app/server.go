@@ -124,13 +124,14 @@ func RESPParser(input []byte) (string, error) {
 
 func ParseString(input []byte) (string, error) {
 
-	fmt.Println("function string values ", string(input))
+	//fmt.Println("function string values ", string(input))
 	// function to parse strings
 	string1 := ""
 	if input[0] == '$' {
 		//this is a bulk string
 		//
 		len := int(input[1])
+		fmt.Println("Inside bulk strings ", int(input[1]))
 		// \r -3
 		// \n - 4
 
