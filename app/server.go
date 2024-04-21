@@ -74,6 +74,7 @@ func handleConn1(conn net.Conn) {
 				//fmt.Println("Responding with pong ", i, n)
 				//return
 			}
+			return
 		}
 
 		writeResponse, err := RESPParser(inputData)
