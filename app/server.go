@@ -166,13 +166,14 @@ func ParseArray(input []byte) ([]string, error) {
 		//append the element to the arrays
 		// if input[j] == '$' {
 		//next element is a bulk string
+
 		for i := 0; i < int(len2); i++ {
 			// iterate over the array elements
 			//parse String returns the element i
 			//fmt.Println("Line 182 ", string(input[4:]))
 			element1, err := ParseString(input[4:])
 
-			fmt.Println("line 183 ", element1)
+			fmt.Println("line 183 ", i, element1, input[4:])
 
 			if err != nil {
 				fmt.Println("Failed to parse string ")
