@@ -65,13 +65,6 @@ func handleConn1(conn net.Conn) {
 		if n == 0 {
 			return
 		}
-		writeResponse, err := RESPParser(inputData)
-
-		if err != nil {
-			fmt.Println("Error to run function RESPParser")
-		}
-		conn.Write([]byte(writeResponse))
-		// fmt.Println(string(inputData))
 
 		for i := 0; i < n; i++ {
 
@@ -82,6 +75,15 @@ func handleConn1(conn net.Conn) {
 				return
 			}
 		}
+
+		writeResponse, err := RESPParser(inputData)
+
+		if err != nil {
+			fmt.Println("Error to run function RESPParser")
+		}
+		conn.Write([]byte(writeResponse))
+		// fmt.Println(string(inputData))
+
 		//conn.Write([]byte("+PONG\r\n"))
 
 	}
