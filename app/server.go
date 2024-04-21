@@ -50,9 +50,9 @@ func handleConn1(conn net.Conn) {
 
 		inputData := make([]byte, 1024) // buffer to read multiple inputs
 
-		n, error := conn.Read(inputData)
+		n, err := conn.Read(inputData)
 
-		if error != nil {
+		if err != nil {
 			fmt.Println("Error reading bytes")
 			return
 		}
@@ -148,7 +148,7 @@ func ParseString(input []byte) (string, error) {
 
 		// }
 
-		string1 = string(input[5 : 5+len])
+		string1 = string(input[4; : 5+len])
 		fmt.Println("Inside parse string function ", string1)
 
 	} else {
