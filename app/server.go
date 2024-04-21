@@ -171,9 +171,9 @@ func ParseArray(input []byte) ([]string, error) {
 			//parse String returns the element i
 			//fmt.Println("Line 182 ", string(input[4:]))
 
-			fmt.Println("line 183 ", i, string(input[4+i+2:]))
+			fmt.Println("line 183 ", i, string(input[4+i*2:]))
 
-			element1, err := ParseString(input[4+i+2:])
+			element1, err := ParseString(input[4+i*2:])
 
 			//fmt.Println("line 183 ", i, element1)
 
