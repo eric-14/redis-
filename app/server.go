@@ -96,7 +96,7 @@ func RESPParser(input []byte) (string, error) {
 
 	*/
 
-	reponsePrefix := "$3\r\n" // number of characters in the prefix are 6
+	reponsePrefix := "$"      // number of characters in the prefix are 6
 	responsePostfix := "\r\n" // number of characters in the postfix are 4
 	response := ""
 	echoFlag := false
@@ -117,7 +117,7 @@ func RESPParser(input []byte) (string, error) {
 
 	}
 
-	result := reponsePrefix + response + responsePostfix
+	result := reponsePrefix + string(len(response)) + "\r\n" + response + responsePostfix
 
 	return result, nil
 
@@ -147,6 +147,7 @@ func ParseString(input []byte) (string, error) {
 		// }
 
 		string1 = string(input[5 : 5+len])
+		fmt.Println("Inside parse string function ", string1)
 
 	} else {
 		return "", errors.New("From Parse String input not bulk string ")
