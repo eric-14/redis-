@@ -169,9 +169,9 @@ func ParseArray(input []byte) ([]string, error) {
 		len1 := string(rune(input[1]))
 		len2, _ := strconv.ParseInt(len1, 10, 64) //number of items in the array
 
-		// pos 2 -- \r
+		//pos 2 -- \r
 		//pos 3 -- \n
-		j := 4
+		j := 3
 		//iterate upto \r\n to find the first element
 		//append the element to the arrays
 		if input[j] == '$' {
