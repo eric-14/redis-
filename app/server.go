@@ -134,14 +134,15 @@ func ParseString(input []byte) (string, error) {
 		slen := string(rune(input[1]))
 		len, _ := strconv.ParseInt(slen, 10, 64)
 
-		fmt.Println("Inside bulk strings ", len)
 		// \r -3
 		// \n - 4
 
 		for i := 0; i < int(len); i++ {
 
 			//appending characters to form the first
-			string1 = string1 + string(input[i])
+			if input[i] != '\r' && input[i] != '\n' {
+				string1 = string1 + string(input[i])
+			}
 
 		}
 
