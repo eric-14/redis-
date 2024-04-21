@@ -137,14 +137,16 @@ func ParseString(input []byte) (string, error) {
 		// \r -3
 		// \n - 4
 
-		for i := 0; i < int(len); i++ {
+		// for i := 0; i < int(len); i++ {
 
-			//appending characters to form the first
-			if input[i] != '\r' && input[i] != '\n' {
-				string1 = string1 + string(input[i])
-			}
+		// 	//appending characters to form the first
+		// 	if input[i] != '\r' && input[i] != '\n' {
+		// 		string1 = string1 + string(input[i])
+		// 	}
 
-		}
+		// }
+
+		string1 = string(input[5 : 5+len])
 
 	} else {
 		return "", errors.New("From Parse String input not bulk string ")
