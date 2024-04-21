@@ -71,7 +71,7 @@ func handleConn1(conn net.Conn) {
 			if inputData[i] == 'p' && inputData[i+1] == 'i' && inputData[i+2] == 'n' && inputData[i+3] == 'g' { //PING MESSAGE
 
 				conn.Write([]byte("$" + "4\r\n" + "PONG\r\n"))
-				fmt.Println("Responding with pong ", i, n)
+				//fmt.Println("Responding with pong ", i, n)
 				return
 			}
 		}
