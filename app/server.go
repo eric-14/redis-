@@ -173,7 +173,7 @@ func ParseArray(input []byte) ([]string, error) {
 
 			fmt.Println("line 183 ", i, string(input[4+i*1:]))
 
-			element1, err := ParseString(input[4+i*2:])
+			element1, err := ParseString(input[4+i*1:])
 
 			//fmt.Println("line 183 ", i, element1)
 
