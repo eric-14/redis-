@@ -102,6 +102,7 @@ func RESPParser(input []byte) (string, error) {
 
 	parsedData, err := ParseArray(input)
 
+	fmt.Println("ParsedData ", parsedData)
 	if err != nil {
 		fmt.Println("Error parsing the input bytes in function RESPParser ")
 	}
@@ -115,7 +116,7 @@ func RESPParser(input []byte) (string, error) {
 		}
 
 	}
-	fmt.Println("Resp Parser response ", response)
+	//fmt.Println("Resp Parser response ", response)
 
 	result := reponsePrefix + "4" + response + responsePostfix
 
