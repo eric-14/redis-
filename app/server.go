@@ -41,27 +41,15 @@ func main() {
 }
 
 func handleConn1(conn net.Conn) {
-
 	//defer conn.Close()
-
 	//fmt.Println("Handle connection function")
-
 	for {
-
 		inputData := make([]byte, 1024) // buffer to read multiple inputs
-
 		n, err := conn.Read(inputData)
-
 		if err != nil {
 			fmt.Println("Error reading bytes")
 			return
 		}
-
-		// iterate through the message to get info PING
-		//message := "+PONG\r\n"
-		//responseMessage := []byte(message)
-		// numberOfPings := 1
-
 		if n == 0 {
 			return
 		}
@@ -126,17 +114,12 @@ func ParseString(input1 []byte) (string, error) {
 	for i < 20 {
 		//fmt.Println("Inside the FUNC parseString ", i)
 		if input1[0+i] == '$' {
-
 			//this is a bulk string
-
 			slen := string(rune(input1[i+1]))
 			len, _ := strconv.ParseInt(slen, 10, 64)
-
 			fmt.Println("Bulk string is TRUE", len)
-
 			// \r -3
 			// \n - 4
-
 			string1 = string(input1[4+i : 4+int(len)+i])
 			fmt.Println("Parse String String1", len, string1)
 			break
@@ -165,16 +148,7 @@ func ParseArray(input []byte) ([]string, error) {
 		//j := 4
 
 		for i := 0; i < int(len2); i++ {
-			// iterate over the array elements
-			//parse String returns the element i
-			//fmt.Println("Line 182 ", string(input[4:]))
-
-			//fmt.Println("line 183 ", i, string(input[4+i*2:]))
-
 			element1, err := ParseString(input[4+i*2:])
-
-			//fmt.Println("line 183 ", i, element1)
-
 			if err != nil {
 				fmt.Println("Failed to parse string ")
 			}
