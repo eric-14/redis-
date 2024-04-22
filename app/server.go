@@ -85,7 +85,7 @@ func RESPParser(input []byte) (string, error) {
 
 	fmt.Println("ParsedData ", parsedData)
 	if err != nil {
-		fmt.Println("Error parsing the function RESPParser ")
+		fmt.Println("Error parsing the function clea ")
 	}
 
 	for i := 0; i < len(parsedData); i++ {
