@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -14,6 +13,8 @@ const (
 	PORT1 = "6379"
 	TYPE1 = "tcp"
 )
+
+var dictionary map[string]string
 
 func main() {
 	listener, err := net.Listen(TYPE1, HOST1+":"+PORT1)
@@ -43,6 +44,9 @@ func main() {
 func handleConn1(conn net.Conn) {
 	//defer conn.Close()
 	//fmt.Println("Handle connection function")
+
+	dictionary = make(map[string]string)
+
 	for {
 		inputData := make([]byte, 1024) // buffer to read multiple inputs
 		n, err := conn.Read(inputData)
@@ -89,7 +93,15 @@ func RESPParser(input []byte) (string, error) {
 			echoFlag = true
 		} else if parsedData[i] == "ping" {
 			return "$4\r\nPONG\r\n", nil
+		} else if parsedData[i] == " " {
+			return "+OK\r\n", nil
+		} else if parsedData[i] != " " {
+			// parsed array has returned a value then
+			len1 := strconv.Itoa(len(parsedData[0]))
+
+			return "$" + len1 + "\r\n" + parsedData[0] + "\r\n", nil
 		}
+
 		if echoFlag == true {
 			response = response + string(parsedData[i])
 		}
@@ -160,7 +172,73 @@ func ParseArray(input []byte) ([]string, error) {
 		//}
 
 	} else {
-		return []string{}, errors.New("Inside ParseArray the passed byte does not follow redis encoding")
+		res1, err := executingFunction(input)
+
+		if err != nil {
+			fmt.Println("Failed to execute function ")
+		}
+		return []string{res1}, nil
+		//return []string{}, errors.New("Inside ParseArray the passed byte does not follow redis encoding")
 	}
 	return element, nil
+}
+
+func executingFunction(input []byte) (string, error) {
+	//implement set function
+	i := 0
+	for i < len(input) {
+		if input[i] == 's' && input[i+1] == 'e' && input[i+2] == 't' {
+			// set function implementation
+			string1, err := keyValue(input[i+3:])
+			if err != nil {
+				fmt.Println("Failed to get Key")
+			}
+
+			// adding the key value pairs to db
+			dictionary[string1[0]] = string1[1]
+
+		} else if input[i] == 'g' && input[i+1] == 'e' && input[i+2] == 't' {
+			// implementing get function
+			getResult, err := keyValue(input[i+3:])
+			if err != nil {
+				fmt.Println("Failed to execute get operation")
+
+			}
+			key := getResult[0]
+			res1 := dictionary[key] // value in the dictionary
+
+			return res1, nil
+
+		}
+
+		i++
+	}
+	return "", nil
+}
+
+func keyValue(input []byte) ([]string, error) {
+	string1 := ""
+	string2 := ""
+	result := []string{}
+	counter := 0
+	for i := 0; i < len(input); i++ {
+		/*
+			first value is key
+			second value is value
+		*/
+		if input[i] == ' ' {
+			counter++
+		}
+
+		if counter < 1 && input[i] != ' ' {
+			string1 = string1 + string(input[i])
+
+		} else if counter >= 1 && input[i] != ' ' {
+			string2 = string2 + string(input[i])
+		}
+
+	}
+	result[0] = string1
+	result[1] = string2
+	return result, nil
 }
