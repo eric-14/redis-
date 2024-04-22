@@ -157,8 +157,6 @@ func ParseArray(input []byte) ([]string, error) {
 		}
 		//fmt.Println("inside func array array is ", element)
 
-		//}
-
 	} else {
 		return []string{}, errors.New("Inside ParseArray the passed byte does not follow redis encoding")
 	}
