@@ -98,7 +98,7 @@ func RESPParser(input []byte) (string, error) {
 		} else if parsedData[i] != " " {
 			// parsed array has returned a value then
 			len1 := strconv.Itoa(len(parsedData[0]))
-
+			fmt.Println("line 101")
 			return "$" + len1 + "\r\n" + parsedData[0] + "\r\n", nil
 		}
 
