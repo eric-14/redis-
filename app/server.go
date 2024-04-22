@@ -169,8 +169,6 @@ func ParseArray(input []byte) ([]string, error) {
 		}
 		//fmt.Println("inside func array array is ", element)
 
-		//}
-
 	} else {
 		res1, err := executingFunction(input)
 
