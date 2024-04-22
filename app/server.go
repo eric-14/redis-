@@ -103,7 +103,7 @@ func RESPParser(input []byte) (string, error) {
 		}
 
 		if echoFlag == true {
-			response = response + string(parsedData[i])
+			response = response + string(parsedData[i+1])
 		}
 
 	}
