@@ -83,7 +83,7 @@ func RESPParser(input []byte) (string, error) {
 
 	parsedData, err := ParseArray(input)
 
-	fmt.Println("ParsedData ", parsedData[1])
+	fmt.Println("ParsedData ", parsedData)
 	if err != nil {
 		fmt.Println("Error parsing the function clea ")
 	}
