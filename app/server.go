@@ -91,6 +91,15 @@ func RESPParser(input []byte) (string, error) {
 	for i := 0; i < len(parsedData); i++ {
 		if parsedData[i] == "echo" {
 			echoFlag = true
+		} else if parsedData[i] == "set" {
+			executingFunction(0, parsedData[i+1], parsedData[i+2])
+			return "+OK\r\n", nil
+		} else if parsedData[i] == "get" {
+			res12, err := executingFunction(1, parsedData[i+1], "")
+			if err != nil {
+				fmt.Println("Error executing get function")
+			}
+			return "$" + strconv.Itoa(len(res12)) + "\r\n" + res12 + "\r\n", nil
 		} else if parsedData[i] == "ping" {
 			return "$4\r\nPONG\r\n", nil
 		} else if parsedData[i] == " " {
@@ -117,24 +126,32 @@ func RESPParser(input []byte) (string, error) {
 
 }
 
-func ParseString(input1 []byte) (string, error) {
+func ParseString(input1 []byte, count1 int) (string, error) {
 
 	//fmt.Println("function string values ", string(input))
 	// function to parse strings
 	string1 := ""
+	count2 := 0
 	i := 0
-	for i < 20 {
+	for {
 		//fmt.Println("Inside the FUNC parseString ", i)
-		if input1[0+i] == '$' {
-			//this is a bulk string
-			slen := string(rune(input1[i+1]))
-			len, _ := strconv.ParseInt(slen, 10, 64)
-			fmt.Println("Bulk string is TRUE", len)
-			// \r -3
-			// \n - 4
-			string1 = string(input1[4+i : 4+int(len)+i])
-			fmt.Println("Parse String String1", len, string1)
-			break
+		if input1[i] == '$' {
+
+			// increment counter
+
+			if count1 == count2 {
+				// this is the unparsed string
+				//this is a bulk string
+				slen := string(rune(input1[i+1]))
+				len, _ := strconv.ParseInt(slen, 10, 64)
+				//fmt.Println("Bulk string is TRUE", len, count1, count2)
+				// \r -3
+				// \n - 4
+				string1 = string(input1[4+i : 4+int(len)+i])
+				//fmt.Println("Parse String String1", len, string1)
+				break
+			} //else if count2 > counter
+			count2++
 		}
 		i++
 
@@ -153,14 +170,15 @@ func ParseArray(input []byte) ([]string, error) {
 		//this is an array
 		//fmt.Println("Inside function parsed Array len", string(rune(input[1])))
 		len1 := string(rune(input[1]))
-		len2, _ := strconv.ParseInt(len1, 10, 64) //number of items in the array
+		arrayLen, _ := strconv.ParseInt(len1, 10, 64) //number of items in the array
 
 		//pos 2 -- \r
 		//pos 3 -- \n
 		//j := 4
 
-		for i := 0; i < int(len2); i++ {
-			element1, err := ParseString(input[4+i*2:])
+		for i := 0; i < int(arrayLen); i++ {
+			element1, err := ParseString(input[4:], i)
+
 			if err != nil {
 				fmt.Println("Failed to parse string ")
 			}
@@ -169,48 +187,35 @@ func ParseArray(input []byte) ([]string, error) {
 		}
 		//fmt.Println("inside func array array is ", element)
 
-	} else {
-		res1, err := executingFunction(input)
-
-		if err != nil {
-			fmt.Println("Failed to execute function ")
-		}
-		return []string{res1}, nil
-		//return []string{}, errors.New("Inside ParseArray the passed byte does not follow redis encoding")
+		//
 	}
+	//else {
+	// 	res1, err := executingFunction(input)
+
+	// 	if err != nil {
+	// 		fmt.Println("Failed to execute function ")
+	// 	}
+	// 	return []string{res1}, nil
+	// 	//return []string{}, errors.New("Inside ParseArray the passed byte does not follow redis encoding")
+	// }
 	return element, nil
 }
 
-func executingFunction(input []byte) (string, error) {
+func executingFunction(fn int, key string, value string) (string, error) {
 	//implement set function
-	i := 0
-	for i < len(input) {
-		if input[i] == 's' && input[i+1] == 'e' && input[i+2] == 't' {
-			// set function implementation
-			string1, err := keyValue(input[i+3:])
-			if err != nil {
-				fmt.Println("Failed to get Key")
-			}
 
-			// adding the key value pairs to db
-			dictionary[string1[0]] = string1[1]
+	if fn == 0 {
+		// set function implementation
 
-		} else if input[i] == 'g' && input[i+1] == 'e' && input[i+2] == 't' {
-			// implementing get function
-			getResult, err := keyValue(input[i+3:])
-			if err != nil {
-				fmt.Println("Failed to execute get operation")
-
-			}
-			key := getResult[0]
-			res1 := dictionary[key] // value in the dictionary
-
-			return res1, nil
-
-		}
-
-		i++
+		// adding the key value pairs to db
+		dictionary[key] = value
+		return "", nil
+	} else if fn == 1 {
+		// implementing get function
+		res1 := dictionary[key] // value in the dictionary
+		return res1, nil
 	}
+
 	return "", nil
 }
 
