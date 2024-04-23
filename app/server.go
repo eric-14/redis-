@@ -142,7 +142,7 @@ func ParseString(input1 []byte, count1 int) (string, error) {
 				//this is a bulk string
 				slen := string(rune(input1[i+1]))
 				len, _ := strconv.ParseInt(slen, 10, 64)
-				fmt.Println("Bulk string is TRUE", len)
+				fmt.Println("Bulk string is TRUE", len, count1, count2)
 				// \r -3
 				// \n - 4
 				string1 = string(input1[4+i : 4+int(len)+i])
