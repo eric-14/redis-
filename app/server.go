@@ -92,7 +92,7 @@ func RESPParser(input []byte) (string, error) {
 		if parsedData[i] == "echo" {
 			echoFlag = true
 		} else if parsedData[i] == "set" {
-			resRes := ""
+			//resRes := ""
 
 			// for i := 0; i < len(parsedData)-1; i++ {
 			// 	resRes = resRes + strconv.Itoa(len(parsedData[i])) + "\r\n" + parsedData[i] + "\r\n"
