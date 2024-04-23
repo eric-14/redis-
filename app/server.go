@@ -94,10 +94,10 @@ func RESPParser(input []byte) (string, error) {
 		} else if parsedData[i] == "set" {
 			resRes := ""
 
-			for i := 0; i < len(parsedData)-1; i++ {
-				resRes = resRes + strconv.Itoa(len(parsedData[i])) + "\r\n" + parsedData[i] + "\r\n"
-			}
-			return "$" + resRes, nil
+			// for i := 0; i < len(parsedData)-1; i++ {
+			// 	resRes = resRes + strconv.Itoa(len(parsedData[i])) + "\r\n" + parsedData[i] + "\r\n"
+			// }
+			return "+OK\r\n", nil
 		} else if parsedData[i] == "ping" {
 			return "$4\r\nPONG\r\n", nil
 		} else if parsedData[i] == " " {
