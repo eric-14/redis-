@@ -124,24 +124,32 @@ func RESPParser(input []byte) (string, error) {
 
 }
 
-func ParseString(input1 []byte) (string, error) {
+func ParseString(input1 []byte, count1 int) (string, error) {
 
 	//fmt.Println("function string values ", string(input))
 	// function to parse strings
 	string1 := ""
+	count2 := 0
 	i := 0
-	for i < 20 {
+	for {
 		//fmt.Println("Inside the FUNC parseString ", i)
 		if input1[0+i] == '$' {
-			//this is a bulk string
-			slen := string(rune(input1[i+1]))
-			len, _ := strconv.ParseInt(slen, 10, 64)
-			fmt.Println("Bulk string is TRUE", len)
-			// \r -3
-			// \n - 4
-			string1 = string(input1[4+i : 4+int(len)+i])
-			fmt.Println("Parse String String1", len, string1)
-			break
+
+			count2++ // increment counter
+
+			if count1 == count2 {
+				// this is the unparsed string
+				//this is a bulk string
+				slen := string(rune(input1[i+1]))
+				len, _ := strconv.ParseInt(slen, 10, 64)
+				fmt.Println("Bulk string is TRUE", len)
+				// \r -3
+				// \n - 4
+				string1 = string(input1[4+i : 4+int(len)+i])
+				fmt.Println("Parse String String1", len, string1)
+				break
+			}
+
 		}
 		i++
 
@@ -160,14 +168,15 @@ func ParseArray(input []byte) ([]string, error) {
 		//this is an array
 		//fmt.Println("Inside function parsed Array len", string(rune(input[1])))
 		len1 := string(rune(input[1]))
-		len2, _ := strconv.ParseInt(len1, 10, 64) //number of items in the array
+		arrayLen, _ := strconv.ParseInt(len1, 10, 64) //number of items in the array
 
 		//pos 2 -- \r
 		//pos 3 -- \n
 		//j := 4
 
-		for i := 0; i < int(len2); i++ {
-			element1, err := ParseString(input[4+i*3:])
+		for i := 0; i < int(arrayLen); i++ {
+			element1, err := ParseString(input[4:], i)
+
 			if err != nil {
 				fmt.Println("Failed to parse string ")
 			}
