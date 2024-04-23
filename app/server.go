@@ -94,7 +94,7 @@ func RESPParser(input []byte) (string, error) {
 		} else if parsedData[i] == "set" {
 			resRes := ""
 
-			for i := 0; i < len(parsedData); i++ {
+			for i := 0; i =< len(parsedData); i++ {
 				resRes = resRes + strconv.Itoa(len(parsedData[i+1])) + "\r\n" + parsedData[i+1] + "\r\n"
 			}
 			return "$" + resRes, nil
@@ -142,11 +142,11 @@ func ParseString(input1 []byte, count1 int) (string, error) {
 				//this is a bulk string
 				slen := string(rune(input1[i+1]))
 				len, _ := strconv.ParseInt(slen, 10, 64)
-				fmt.Println("Bulk string is TRUE", len, count1, count2)
+				//fmt.Println("Bulk string is TRUE", len, count1, count2)
 				// \r -3
 				// \n - 4
 				string1 = string(input1[4+i : 4+int(len)+i])
-				fmt.Println("Parse String String1", len, string1)
+				//fmt.Println("Parse String String1", len, string1)
 				break
 			} //else if count2 > counter
 			count2++
