@@ -91,13 +91,13 @@ func RESPParser(input []byte) (string, error) {
 	for i := 0; i < len(parsedData); i++ {
 		if parsedData[i] == "echo" {
 			echoFlag = true
-		}else if parsedData[i] == "set"{
-				resRes := ""
-				
-				for i:=0; i < len(parsedData); i++{
-					resRes = resRes + len(parsedData[i]) + "\r\n" + parsedData[i] + "\r\n"
-				}
-				return "$" + resRes
+		} else if parsedData[i] == "set" {
+			resRes := ""
+
+			for i := 0; i < len(parsedData); i++ {
+				resRes = resRes + len(parsedData[i]) + "\r\n" + parsedData[i] + "\r\n"
+			}
+			return "$" + resRes
 		} else if parsedData[i] == "ping" {
 			return "$4\r\nPONG\r\n", nil
 		} else if parsedData[i] == " " {
@@ -227,7 +227,7 @@ func keyValue(input []byte) ([]string, error) {
 	result := []string{}
 	counter := 0
 	for i := 0; i < len(input); i++ {
-		
+		/*
 			first value is key
 			second value is value
 		*/
