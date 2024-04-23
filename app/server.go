@@ -92,12 +92,14 @@ func RESPParser(input []byte) (string, error) {
 		if parsedData[i] == "echo" {
 			echoFlag = true
 		} else if parsedData[i] == "set" {
-			//resRes := ""
-
-			// for i := 0; i < len(parsedData)-1; i++ {
-			// 	resRes = resRes + strconv.Itoa(len(parsedData[i])) + "\r\n" + parsedData[i] + "\r\n"
-			// }
+			executingFunction(0, parsedData[i+1], parsedData[i+2])
 			return "+OK\r\n", nil
+		} else if parsedData[i] == "get" {
+			res12, err := executingFunction(1, parsedData[i+1], "")
+			if err != nil {
+				fmt.Println("Error executing get function")
+			}
+			return "$" + strconv.Itoa(len(res12)) + "\r\n" + res12 + "\r\n", nil
 		} else if parsedData[i] == "ping" {
 			return "$4\r\nPONG\r\n", nil
 		} else if parsedData[i] == " " {
@@ -185,48 +187,35 @@ func ParseArray(input []byte) ([]string, error) {
 		}
 		//fmt.Println("inside func array array is ", element)
 
-	} else {
-		res1, err := executingFunction(input)
-
-		if err != nil {
-			fmt.Println("Failed to execute function ")
-		}
-		return []string{res1}, nil
-		//return []string{}, errors.New("Inside ParseArray the passed byte does not follow redis encoding")
+		//
 	}
+	//else {
+	// 	res1, err := executingFunction(input)
+
+	// 	if err != nil {
+	// 		fmt.Println("Failed to execute function ")
+	// 	}
+	// 	return []string{res1}, nil
+	// 	//return []string{}, errors.New("Inside ParseArray the passed byte does not follow redis encoding")
+	// }
 	return element, nil
 }
 
-func executingFunction(input []byte) (string, error) {
+func executingFunction(fn int, key string, value string) (string, error) {
 	//implement set function
-	i := 0
-	for i < len(input) {
-		if input[i] == 's' && input[i+1] == 'e' && input[i+2] == 't' {
-			// set function implementation
-			string1, err := keyValue(input[i+3:])
-			if err != nil {
-				fmt.Println("Failed to get Key")
-			}
 
-			// adding the key value pairs to db
-			dictionary[string1[0]] = string1[1]
+	if fn == 0 {
+		// set function implementation
 
-		} else if input[i] == 'g' && input[i+1] == 'e' && input[i+2] == 't' {
-			// implementing get function
-			getResult, err := keyValue(input[i+3:])
-			if err != nil {
-				fmt.Println("Failed to execute get operation")
-
-			}
-			key := getResult[0]
-			res1 := dictionary[key] // value in the dictionary
-
-			return res1, nil
-
-		}
-
-		i++
+		// adding the key value pairs to db
+		dictionary[key] = value
+		return "", nil
+	} else if fn == 1 {
+		// implementing get function
+		res1 := dictionary[key] // value in the dictionary
+		return res1, nil
 	}
+
 	return "", nil
 }
 
