@@ -133,9 +133,9 @@ func ParseString(input1 []byte, count1 int) (string, error) {
 	i := 0
 	for {
 		//fmt.Println("Inside the FUNC parseString ", i)
-		if input1[0+i] == '$' {
+		if input1[i] == '$' {
 
-			count2++ // increment counter
+			// increment counter
 
 			if count1 == count2 {
 				// this is the unparsed string
@@ -148,8 +148,8 @@ func ParseString(input1 []byte, count1 int) (string, error) {
 				string1 = string(input1[4+i : 4+int(len)+i])
 				fmt.Println("Parse String String1", len, string1)
 				break
-			}
-
+			} //else if count2 > counter
+			count2++
 		}
 		i++
 
