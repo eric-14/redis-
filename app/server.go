@@ -95,7 +95,7 @@ func RESPParser(input []byte) (string, error) {
 			resRes := ""
 
 			for i := 0; i < len(parsedData); i++ {
-				resRes = resRes + strconv.Itoa(len(parsedData[i])) + "\r\n" + parsedData[i] + "\r\n"
+				resRes = resRes + strconv.Itoa(len(parsedData[i+1])) + "\r\n" + parsedData[i+1] + "\r\n"
 			}
 			return "$" + resRes, nil
 		} else if parsedData[i] == "ping" {
@@ -167,7 +167,7 @@ func ParseArray(input []byte) ([]string, error) {
 		//j := 4
 
 		for i := 0; i < int(len2); i++ {
-			element1, err := ParseString(input[4+i*2:])
+			element1, err := ParseString(input[4+i*3:])
 			if err != nil {
 				fmt.Println("Failed to parse string ")
 			}
