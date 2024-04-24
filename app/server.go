@@ -119,6 +119,7 @@ func RESPParser(input []byte) (string, error) {
 			return "+OK\r\n", nil
 		} else if parsedData[i] == "get" {
 			res12, err := executingFunction(1, parsedData[i+1], "")
+			fmt.Println("executing get")
 			if err != nil {
 				fmt.Println("Error executing get function")
 			}
