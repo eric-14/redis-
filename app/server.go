@@ -109,11 +109,7 @@ func RESPParser(input []byte) (string, error) {
 			if len(parsedData) > 3 {
 				// there is more the keys and values in the entry 
 
-				if(parsedData[i+3] == "px"){
-					 
-
-					
-					
+				if(parsedData[i+3] == "px"){					
 					timetracker(0, parsedData[i+1], parsedData[i+2], &Data1{time.Now().UTC(), parsedData[i+3], parsedData[i+4]})
 					return "+OK\r\n", nil
 				}
@@ -274,6 +270,6 @@ func keyValue(input []byte) ([]string, error) {
 }
 
 func timetracker(fn int, key string, value string, data *Data1){
-	executingFunction(0, key, value)
+	string1, _ := executingFunction(0, key, value)
 	timetracker1[key] = *data
 }
