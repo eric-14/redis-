@@ -97,7 +97,7 @@ func RESPParser(input []byte) (string, error) {
 
 	parsedData, err := ParseArray(input)
 
-	fmt.Println("ParsedData ", parsedData)
+	fmt.Println("ParsedData 100", parsedData)
 	if err != nil {
 		fmt.Println("Error parsing the function clea ")
 	}
@@ -164,8 +164,8 @@ func ParseString(input1 []byte, count1 int) (string, error) {
 		if input1[i] == '$' {
 
 			// increment counter
-
-			if count1 <= count2 {
+			fmt.Println("line 167 ", i, count1, count2 )
+			if count1 == count2 {
 				// this is the unparsed string
 				//this is a bulk string
 				slen := string(rune(input1[i+1]))
