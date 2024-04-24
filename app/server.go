@@ -238,7 +238,9 @@ func executingFunction(fn int, key string, value string) (string, error) {
 		return "", nil
 	} else if fn == 1 {
 		// implementing get function
+		
 		res1 := dictionary[key] // value in the dictionary
+		fmt.Println("line 241 ", res1)
 		return res1, nil
 	}
 
