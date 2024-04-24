@@ -280,6 +280,6 @@ func timetracker(fn int, key string, value1 string,nowTime time.Time,value strin
 		value: value1, 
 		expiryTime: expiryTime, 
 	}
-	fmt.Println("line 275 ",string1,  data)
+	fmt.Println("line 275 ",fn , key, value1, nowTime, value. expiryTime, string1,  data)
 	timetracker1[key]=data
 }
