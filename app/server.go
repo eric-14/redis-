@@ -111,7 +111,7 @@ func RESPParser(input []byte) (string, error) {
 				// there is more the keys and values in the entry 
 
 				if(parsedData[i+3] == "px"){					
-					timetracker(0, parsedData[i+1], parsedData[i+2], time.Now().UTC(), parsedData[i+3], parsedData[i+4])
+					timetracker(0, parsedData[i+1], parsedData[i+2], time.Now().UTC(), parsedData[i+4])
 					return "+OK\r\n", nil
 				}
 			}
@@ -271,15 +271,15 @@ func keyValue(input []byte) ([]string, error) {
 	return result, nil
 }
 
-func timetracker(fn int, key string, value1 string,nowTime time.Time,value string,expiryTime string ){ 
+func timetracker(fn int, key string, value1 string,nowTime time.Time,expiryTime string ){ 
 	fmt.Println("line 273")
-	string1, _ := executingFunction(0, key, value)
+	string1, _ := executingFunction(0, key, value1)
 	
 	data := Data1{
 		timeNow: nowTime, 
 		value: value1, 
 		expiryTime: expiryTime, 
 	}
-	fmt.Println("line 275 ",fn , key, value1, nowTime, value,expiryTime, string1,  data)
+	fmt.Println("line 275 ",fn , key, value1 ,expiryTime, string1, nowTime, data)
 	timetracker1[key]=data
 }
