@@ -236,7 +236,7 @@ func executingFunction(fn int, key string, value string) (string, error){
 		// implementing get function
 		
 		res1 := dictionary[key] // value in the dictionary
-
+		fmt.Println("line 239 result from get fn", res1)
 		if timetracker1[key] != dataEmpty {
 			// if the data type has a time tracker then execute time function 
 			timedata := timetracker1[key]  // time information about 
