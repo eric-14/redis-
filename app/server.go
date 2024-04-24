@@ -24,7 +24,7 @@ type Data1 struct {
 
 }
 
-var timetracker1 map[string]*Data1
+var timetracker1 map[string]Data1
 
 
 
@@ -273,7 +273,7 @@ func timetracker(fn int, key string, value1 string,nowTime time.Time,value strin
 	fmt.Println("line 273")
 	string1, _ := executingFunction(0, key, value)
 	fmt.Println("line 275 ", string1)
-	timetracker1[key]=&Data1{
+	timetracker1[key]=Data1{
 		timeNow: nowTime, 
 		value: value1, 
 		expiryTime: expiryTime, 
