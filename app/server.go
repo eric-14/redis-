@@ -111,9 +111,9 @@ func RESPParser(input []byte) (string, error) {
 
 			if len(parsedData) > 3 {
 				// there is more the keys and values in the entry 
-
+				fmt.Println("line 116 adding timetracker fn", len(parsedData))
 				if parsedData[i+3] == "px" {
-					fmt.Println("line 116 adding timetracker fn")					
+										
 					string2, _ := timetracker(0, parsedData[i+1], parsedData[i+2], time.Now().UTC(), parsedData[i+4])
 					fmt.Println("line 115", string2)
 					return "+OK\r\n", nil
