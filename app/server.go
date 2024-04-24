@@ -89,7 +89,7 @@ func RESPParser(input []byte) (string, error) {
 		*** Bulk Strings formart is $<length>\r\n<data>\r\n
 	*/
 	timetracker1 = make(map[string]Data1)
-	
+
 	reponsePrefix := "$"      // number of characters in the prefix are 6
 	responsePostfix := "\r\n" // number of characters in the postfix are 4
 	response := ""
@@ -122,6 +122,9 @@ func RESPParser(input []byte) (string, error) {
 		} else if parsedData[i] == "get" {
 			res12, err := executingFunction(1, parsedData[i+1], "")
 			fmt.Println("executing get")
+			if err == error.New("TIme passed") {
+				return "$-1\r\n", nil 
+			}
 			if err != nil {
 				fmt.Println("Error executing get function")
 			}
@@ -241,6 +244,15 @@ func executingFunction(fn int, key string, value string) (string, error) {
 		// implementing get function
 		
 		res1 := dictionary[key] // value in the dictionary
+
+		if timetracker1[key] != nil {
+			// if the data type has a time tracker then execute time function 
+			timedata := timetracker1[key]  // time information about 
+			if time.Now().UTC() > (timedata.timeNow - strconv.Atoi(timedata.expiryTime)) {
+				//time has elapsed 
+				return "-1", error.New("Time passed")
+			}
+		}
 		fmt.Println("line 241 ", res1)
 		return res1, nil
 	}
