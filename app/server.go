@@ -164,7 +164,7 @@ func ParseString(input1 []byte, count1 int) (string, error) {
 		if input1[i] == '$' {
 
 			// increment counter
-			fmt.Println("line 167 ", i, count1, count2 )
+			
 			if count1 == count2 {
 				// this is the unparsed string
 				//this is a bulk string
@@ -177,6 +177,7 @@ func ParseString(input1 []byte, count1 int) (string, error) {
 				//fmt.Println("Parse String String1", len, string1)
 				break
 			} //else if count2 > counter
+			//fmt.Println("line 167 ", i, count1, count2, string1 )
 			count2++
 		}
 		i++
