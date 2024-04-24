@@ -121,6 +121,8 @@ func RESPParser(input []byte) (string, error) {
 			}
 
 			executingFunction(0, parsedData[i+1], parsedData[i+2])
+
+			
 			return "+OK\r\n", nil
 		} else if parsedData[i] == "get" {
 			res12, err := executingFunction(1, parsedData[i+1], "")
@@ -214,12 +216,7 @@ func ParseArray(input []byte)([]string, error){
 }
 
 func executingFunction(fn int, key string, value string) (string, error){
-	//implement set function
-	// dataEmpty := Data1{
-	// 	"", 
-	// 	"", 
-	// 	time.Time{},
-	// }
+	
 
 	if fn == 0 {
 		// set function implementation
@@ -303,3 +300,11 @@ func timetracker(fn int, key string, value1 string,nowTime time.Time,expiryTime1
 	timetracker1[key]=&data
 	return "+OK\r\n", nil
 }
+
+
+//implement set function
+	// dataEmpty := Data1{
+	// 	"", 
+	// 	"", 
+	// 	time.Time{},
+	// }
