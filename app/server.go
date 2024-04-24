@@ -18,9 +18,10 @@ const (
 var dictionary map[string]string
 
 type Data1 struct {
-	timeNow time.Time  
+	  
 	value string
 	expiryTime string
+	timeNow time.Time
 
 }
 
@@ -273,11 +274,12 @@ func keyValue(input []byte) ([]string, error) {
 func timetracker(fn int, key string, value1 string,nowTime time.Time,value string,expiryTime string ){ 
 	fmt.Println("line 273")
 	string1, _ := executingFunction(0, key, value)
-	fmt.Println("line 275 ", string1)
+	
 	data := Data1{
 		timeNow: nowTime, 
 		value: value1, 
 		expiryTime: expiryTime, 
 	}
+	fmt.Println("line 275 ", data)
 	timetracker1[key]=data
 }
