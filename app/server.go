@@ -24,7 +24,7 @@ type Data1 struct {
 
 }
 
-var timetracker1 map[string]Data1
+var timetracker1 map[string]*Data1
 
 
 
@@ -272,5 +272,5 @@ func keyValue(input []byte) ([]string, error) {
 func timetracker(fn int, key string, value string, data *Data1){
 	string1, _ := executingFunction(0, key, value)
 	fmt.Println(string1)
-	timetracker1[key] = *data
+	timetracker1[key] = data
 }
