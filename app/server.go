@@ -17,14 +17,14 @@ const (
 
 var dictionary map[string]string
 
-type Datatime struct {
-	timeNow string 
+type Data1 struct {
+	timeNow time.Time  
 	value string
 	expiryTime string
 
 }
 
-var timetracker map[string]Datatime
+var timetracker1 map[string]Data1
 
 
 
@@ -110,11 +110,11 @@ func RESPParser(input []byte) (string, error) {
 				// there is more the keys and values in the entry 
 
 				if(parsedData[i+3] == "px"){
-					expTime := parsedData[i+4]
+					 
 
-					dt1 := Datatime{string(time.Now().UTC()), parsedData[i+4], expTime}
 					
-					timetracker(0, parsedData[i+1], parsedData[i+2], parsedData[i+4], dt1)
+					
+					timetracker(0, parsedData[i+1], parsedData[i+2], &Data1{time.Now().UTC(), parsedData[i+3], parsedData[i+4]})
 					return "+OK\r\n", nil
 				}
 			}
@@ -273,7 +273,7 @@ func keyValue(input []byte) ([]string, error) {
 	return result, nil
 }
 
-func timetracker(fn int, key string, value string, dt1 * dataTime){
+func timetracker(fn int, key string, value string, data *Data1){
 	executingFunction(0, key, value)
-	timetracker[key] = dataTime
+	timetracker1[key] = *data
 }
