@@ -165,7 +165,7 @@ func ParseString(input1 []byte, count1 int) (string, error) {
 
 			// increment counter
 
-			if count1 == count2 {
+			if count1 <= count2 {
 				// this is the unparsed string
 				//this is a bulk string
 				slen := string(rune(input1[i+1]))
