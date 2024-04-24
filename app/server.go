@@ -215,11 +215,11 @@ func ParseArray(input []byte)([]string, error){
 
 func executingFunction(fn int, key string, value string) (string, error){
 	//implement set function
-	dataEmpty := Data1{
-		"", 
-		"", 
-		time.Time{},
-	}
+	// dataEmpty := Data1{
+	// 	"", 
+	// 	"", 
+	// 	time.Time{},
+	// }
 
 	if fn == 0 {
 		// set function implementation
