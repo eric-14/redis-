@@ -231,6 +231,7 @@ func executingFunction(fn int, key string, value string) (string, error){
 		
 		res1 := dictionary[key] // value in the dictionary
 		fmt.Println("line 239 result from get fn", res1)
+		
 		if timetracker1[key] != dataEmpty {
 			fmt.Println("line 241 time time tracker in fn get ", timetracker1[key])
 			// if the data type has a time tracker then execute time function 
@@ -248,8 +249,9 @@ func executingFunction(fn int, key string, value string) (string, error){
 				return "-1", errors.New("Expired Value passed")
 			}
 			fmt.Println("line 241 ", res1)
-			return res1, nil
+			
 		}
+		return res1, nil
 		
 	return "", nil
 	}
