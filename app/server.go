@@ -114,7 +114,7 @@ func RESPParser(input []byte) (string, error) {
 				
 				if parsedData[i+3] == "px" {
 										
-					string2, _ := timetracker(0, parsedData[i+1], parsedData[i+2], time.Now().UTC(), parsedData[i+4])
+					string2, _ := timetracker(0, parsedData[i+1], parsedData[i+2], time.Now(), parsedData[i+4])
 					fmt.Println("line 115", string2)
 					return "+OK\r\n", nil
 				}
