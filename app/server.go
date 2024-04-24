@@ -25,7 +25,7 @@ type Data1 struct {
 
 }
 
-var timetracker1 map[string]Data1
+ timetracker1 := make(map[string]Data1)
 
 
 
