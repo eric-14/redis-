@@ -273,5 +273,5 @@ func timetracker(fn int, key string, value string, data *Data1){
 	fmt.Println("line 273")
 	string1, _ := executingFunction(0, key, value)
 	fmt.Println("line 275 ", string1)
-	timetracker1[key]=*data
+	timetracker1[key]=&(*data)
 }
