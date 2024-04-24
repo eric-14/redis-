@@ -90,7 +90,7 @@ func RESPParser(input []byte) (string, error) {
 		***Arrays format is *<number-of-elements>\r\n<element-1>...<element-n>
 		*** Bulk Strings formart is $<length>\r\n<data>\r\n
 	*/
-	timetracker1 = make(map[string]Data1)
+	timetracker1 = make(map[string]*Data1)
 
 	reponsePrefix := "$"      // number of characters in the prefix are 6
 	responsePostfix := "\r\n" // number of characters in the postfix are 4
