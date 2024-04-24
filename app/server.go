@@ -24,8 +24,7 @@ type Data1 struct {
 	timeNow time.Time
 
 }
-
- timetracker1 := make(map[string]Data1)
+var timetracker1 map[string]Data1
 
 
 
@@ -89,7 +88,8 @@ func RESPParser(input []byte) (string, error) {
 		***Arrays format is *<number-of-elements>\r\n<element-1>...<element-n>
 		*** Bulk Strings formart is $<length>\r\n<data>\r\n
 	*/
-
+	timetracker1 = make(map[string]Data1)
+	
 	reponsePrefix := "$"      // number of characters in the prefix are 6
 	responsePostfix := "\r\n" // number of characters in the postfix are 4
 	response := ""
