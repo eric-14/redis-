@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"time"
 )
 
 const (
@@ -15,6 +16,18 @@ const (
 )
 
 var dictionary map[string]string
+
+type Datatime struct {
+	timeNow string 
+	value string
+	expiryTime string
+
+}
+
+var timetracker map[string]Datatime
+
+
+
 
 func main() {
 	listener, err := net.Listen(TYPE1, HOST1+":"+PORT1)
@@ -92,6 +105,20 @@ func RESPParser(input []byte) (string, error) {
 		if parsedData[i] == "echo" {
 			echoFlag = true
 		} else if parsedData[i] == "set" {
+
+			if len(parsedData) > 3 {
+				// there is more the keys and values in the entry 
+
+				if(parsedData[i+3] == "px"){
+					expTime := parsedData[i+4]
+
+					dt1 := Datatime{string(time.Now().UTC()), parsedData[i+4], expTime}
+					
+					timetracker(0, parsedData[i+1], parsedData[i+2], parsedData[i+4], dt1)
+					return "+OK\r\n", nil
+				}
+			}
+
 			executingFunction(0, parsedData[i+1], parsedData[i+2])
 			return "+OK\r\n", nil
 		} else if parsedData[i] == "get" {
@@ -244,4 +271,9 @@ func keyValue(input []byte) ([]string, error) {
 	result[0] = string1
 	result[1] = string2
 	return result, nil
+}
+
+func timetracker(fn int, key string, value string, dt1 * dataTime){
+	executingFunction(0, key, value)
+	timetracker[key] = dataTime
 }
