@@ -108,10 +108,10 @@ func RESPParser(input []byte) (string, error) {
 		if parsedData[i] == "echo" {
 			echoFlag = true
 		} else if parsedData[i] == "set" {
-
+			fmt.Println("line 116 adding timetracker fn", len(parsedData))
 			if len(parsedData) > 3 {
 				// there is more the keys and values in the entry 
-				fmt.Println("line 116 adding timetracker fn", len(parsedData))
+				
 				if parsedData[i+3] == "px" {
 										
 					string2, _ := timetracker(0, parsedData[i+1], parsedData[i+2], time.Now().UTC(), parsedData[i+4])
