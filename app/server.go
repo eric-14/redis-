@@ -24,7 +24,7 @@ type Data1 struct {
 
 }
 
-var timetracker1 map[string]Data1
+var timetracker1 map[string]*Data1
 
 
 
@@ -110,7 +110,7 @@ func RESPParser(input []byte) (string, error) {
 				// there is more the keys and values in the entry 
 
 				if(parsedData[i+3] == "px"){					
-					timetracker(0, parsedData[i+1], parsedData[i+2], Data1{time.Now().UTC(), parsedData[i+3], parsedData[i+4]})
+					timetracker(0, parsedData[i+1], parsedData[i+2], &Data1{time.Now().UTC(), parsedData[i+3], parsedData[i+4]})
 					return "+OK\r\n", nil
 				}
 			}
@@ -269,7 +269,7 @@ func keyValue(input []byte) ([]string, error) {
 	return result, nil
 }
 
-func timetracker(fn int, key string, value string, data Data1){
+func timetracker(fn int, key string, value string, data *Data1) {
 	fmt.Println("line 273")
 	string1, _ := executingFunction(0, key, value)
 	fmt.Println("line 275 ", string1)
