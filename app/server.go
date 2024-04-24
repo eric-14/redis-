@@ -112,7 +112,8 @@ func RESPParser(input []byte) (string, error) {
 			if len(parsedData) > 3 {
 				// there is more the keys and values in the entry 
 
-				if parsedData[i+3] == "px" {					
+				if parsedData[i+3] == "px" {
+					fmt.Println("line 116 adding timetracker fn")					
 					string2, _ := timetracker(0, parsedData[i+1], parsedData[i+2], time.Now().UTC(), parsedData[i+4])
 					fmt.Println("line 115", string2)
 					return "+OK\r\n", nil
@@ -124,11 +125,12 @@ func RESPParser(input []byte) (string, error) {
 		} else if parsedData[i] == "get" {
 			res12, err := executingFunction(1, parsedData[i+1], "")
 			fmt.Println("executing get")
-			if err == errors.New("TIme passed") {
-				return "$-1\r\n", nil 
-			}
+			// if err == errors.New("TIme passed") {
+			// 	return "$-1\r\n", nil 
+			// }
 			if err != nil {
 				fmt.Println("Error executing get function")
+				return "$-1\r\n", nil 
 			}
 			return "$" + strconv.Itoa(len(res12)) + "\r\n" + res12 + "\r\n", nil
 		} else if parsedData[i] == "ping" {
@@ -159,7 +161,6 @@ func RESPParser(input []byte) (string, error) {
 }
 
 func ParseString(input1 []byte, count1 int) (string, error) {
-
 	//fmt.Println("function string values ", string(input))
 	// function to parse strings
 	string1 := ""
@@ -168,22 +169,16 @@ func ParseString(input1 []byte, count1 int) (string, error) {
 	for {
 		//fmt.Println("Inside the FUNC parseString ", i)
 		if input1[i] == '$' {
-
-			// increment counter
-			
 			if count1 == count2 {
-				// this is the unparsed string
-				//this is a bulk string
 				slen := string(rune(input1[i+1]))
 				len, _ := strconv.ParseInt(slen, 10, 64)
 				//fmt.Println("Bulk string is TRUE", len, count1, count2)
 				// \r -3
 				// \n - 4
 				string1 = string(input1[4+i : 4+int(len)+i])
-				//fmt.Println("Parse String String1", len, string1)
 				break
-			} //else if count2 > counter
-			//fmt.Println("line 167 ", i, count1, count2, string1 )
+			} 
+			
 			count2++
 		}
 		i++
@@ -228,7 +223,6 @@ func executingFunction(fn int, key string, value string) (string, error){
 
 	if fn == 0 {
 		// set function implementation
-
 		// adding the key value pairs to db
 		dictionary[key] = value
 		return "", nil
