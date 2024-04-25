@@ -296,9 +296,10 @@ func timetracker(fn int, key string, value1 string,nowTime time.Time,expiryTime1
 		 
 		 
 	}
-	fmt.Println("Line 291 fn timetracker", data)
+
 	//fmt.Println("line 275 ",fn , key, value1 ,expiryTime1, string1, nowTime, &data)
 	timetracker1[key]=data
+	fmt.Println("Line 302 fn timetracker",key,  timetracker1[key])
 	return "+OK\r\n", nil
 }
 
