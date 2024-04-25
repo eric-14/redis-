@@ -1,38 +1,46 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net"
 	"os"
 	"strconv"
 	"time"
-	"errors"
 )
 
 const (
 	HOST1 = "localhost"
-	
+
 	TYPE1 = "tcp"
 )
-var PORT string 
 
+var PORT string
 
 var dictionary map[string]string
+var numberOfReplica int
 
 type Data1 struct {
-	value string
+	value      string
 	expiryTime string
-	timeNow time.Time
+	timeNow    time.Time
 }
+
 var timetracker1 map[string]Data1
 var dataEmpty Data1
 var data Data1
 
-
 func main() {
 	PORT = "6379"
-	fmt.Println("OS args are ", os.Args, len(os.Args))
+	//fmt.Println("OS args are ", os.Args, len(os.Args))
+	newPort, err := portReplica(os.Args)
+	newReplica("TCP", HOST1, newPort)
+
+	if err != nil {
+		fmt.Println("error in replicating ports")
+	}
+
 	listener, err := net.Listen(TYPE1, HOST1+":"+PORT)
 
 	if err != nil {
@@ -42,7 +50,6 @@ func main() {
 	}
 	defer listener.Close()
 	for {
-
 		conn, err := listener.Accept()
 
 		if err != nil {
@@ -55,9 +62,41 @@ func main() {
 
 	}
 
+}
 
-	
+func newReplica(TYPE string, HOST string, PORT string) int {
+	fmt.Println("Replicating a new server")
+	listener, err := net.Listen(TYPE, HOST+":"+PORT)
+	numberOfReplica++
+	if err != nil {
+		fmt.Println("Failed to open a TCP port", err)
+		log.Fatal(err)
+		os.Exit(1)
+	}
+	defer listener.Close()
+	for {
+		conn, err := listener.Accept()
 
+		if err != nil {
+			fmt.Println("Failed to accept new clients in the TCP server ")
+			return numberOfReplica
+		}
+		defer conn.Close()
+
+		go handleConn1(conn)
+	}
+
+}
+
+func portReplica(input []string) (string, error) {
+	//func identifies a port number and can
+	//replicate the code to that port
+	for i := 0; i < len(input); i++ {
+		if input[i] == "port" {
+			return input[i+1], nil
+		}
+	}
+	return "", nil
 }
 
 func handleConn1(conn net.Conn) {
@@ -79,7 +118,7 @@ func handleConn1(conn net.Conn) {
 		}
 
 		writeResponse, err := RESPParser(inputData)
-		
+
 		if err != nil {
 			fmt.Println("Error to run function RESPParser")
 		}
@@ -95,7 +134,6 @@ func RESPParser(input []byte) (string, error) {
 		***Arrays format is *<number-of-elements>\r\n<element-1>...<element-n>
 		*** Bulk Strings formart is $<length>\r\n<data>\r\n
 	*/
-	
 
 	reponsePrefix := "$"      // number of characters in the prefix are 6
 	responsePostfix := "\r\n" // number of characters in the postfix are 4
@@ -115,10 +153,10 @@ func RESPParser(input []byte) (string, error) {
 		} else if parsedData[i] == "set" {
 			fmt.Println("line 116 adding timetracker fn", len(parsedData))
 			if len(parsedData) > 3 {
-				// there is more the keys and values in the entry 
-				
+				// there is more the keys and values in the entry
+
 				if parsedData[i+3] == "px" {
-										
+
 					string2, _ := timetracker(0, parsedData[i+1], parsedData[i+2], time.Now(), parsedData[i+4])
 					fmt.Println("line 115", string2)
 					return "+OK\r\n", nil
@@ -127,22 +165,21 @@ func RESPParser(input []byte) (string, error) {
 
 			executingFunction(0, parsedData[i+1], parsedData[i+2])
 
-			
 			return "+OK\r\n", nil
 		} else if parsedData[i] == "get" {
 			res12, err := executingFunction(1, parsedData[i+1], "")
 			fmt.Println("executing get")
 			// if err == errors.New("TIme passed") {
-			// 	return "$-1\r\n", nil 
+			// 	return "$-1\r\n", nil
 			// }
 			if err != nil {
 				fmt.Println("Error executing get function")
-				return "$-1\r\n", nil 
+				return "$-1\r\n", nil
 			}
 			return "$" + strconv.Itoa(len(res12)) + "\r\n" + res12 + "\r\n", nil
 		} else if parsedData[i] == "ping" {
 			return "$4\r\nPONG\r\n", nil
-		} 
+		}
 		//else if parsedData[i] == " " {
 		//	return "+OK\r\n", nil
 		// } else if parsedData[i] != " " {
@@ -150,14 +187,13 @@ func RESPParser(input []byte) (string, error) {
 		// 	len1 := strconv.Itoa(len(parsedData[i]))
 		// 	fmt.Println("line 101   ")
 		// 	return "$" + len1 + "\r\n" + parsedData[i] + "\r\n", nil
-		
 
 	}
 
 	//}=
 	//fmt.Println("Resp Parser response ", response)
 
-	a := len(parsedData) 
+	a := len(parsedData)
 	//fmt.Println("Length of parsedData is len(parsedData[a-1]) ", len(parsedData[a-1]))
 	result := reponsePrefix + strconv.Itoa(len(parsedData[a-1])) + "\r\n" + parsedData[a-1] + responsePostfix
 
@@ -183,8 +219,8 @@ func ParseString(input1 []byte, count1 int) (string, error) {
 				// \n - 4
 				string1 = string(input1[4+i : 4+int(len)+i])
 				break
-			} 
-			
+			}
+
 			count2++
 		}
 		i++
@@ -192,14 +228,14 @@ func ParseString(input1 []byte, count1 int) (string, error) {
 	return string1, nil
 }
 
-func ParseArray(input []byte)([]string, error){
+func ParseArray(input []byte) ([]string, error) {
 	//function to parse array elements
 	element := []string{}
 	if input[0] == '*' {
 		//this is an array
 		//fmt.Println("Inside function parsed Array len", string(rune(input[1])))
 		len1 := string(rune(input[1]))
-		arrayLen, _ := strconv.ParseInt(len1, 10, 64) 
+		arrayLen, _ := strconv.ParseInt(len1, 10, 64)
 		//number of items in the array
 
 		//pos 2 -- \r
@@ -214,13 +250,12 @@ func ParseArray(input []byte)([]string, error){
 			}
 			element = append(element, element1)
 
-		}		
+		}
 	}
 	return element, nil
 }
 
-func executingFunction(fn int, key string, value string) (string, error){
-	
+func executingFunction(fn int, key string, value string) (string, error) {
 
 	if fn == 0 {
 		// set function implementation
@@ -229,40 +264,38 @@ func executingFunction(fn int, key string, value string) (string, error){
 		return "", nil
 	} else if fn == 1 {
 		// implementing get function
-		
+
 		res1 := dictionary[key] // value in the dictionary
 		fmt.Println("line 231 ", res1)
 		dataEmpty := Data1{}
-		
-		timerdata := timetracker1[key] 
+
+		timerdata := timetracker1[key]
 		fmt.Println("line 239 result from get fn", key, timerdata, dataEmpty)
 		if timerdata != dataEmpty {
 			fmt.Println("line 241 time time tracker in fn get ", timetracker1[key])
-			// if the data type has a time tracker then execute time function 
-			timedata := timetracker1[key]  // time information about 
-			expTime,_ :=  strconv.Atoi(timedata.expiryTime)
-
-
+			// if the data type has a time tracker then execute time function
+			timedata := timetracker1[key] // time information about
+			expTime, _ := strconv.Atoi(timedata.expiryTime)
 
 			duration := time.Since(timedata.timeNow)
 
 			//time.Now().UTC() > time.sub(timedata.timeNow, (time.Duration(expTime) * time.Millisecond))
-			
-			if duration >  time.Duration(expTime)*time.Millisecond {
-				//time has elapsed 
+
+			if duration > time.Duration(expTime)*time.Millisecond {
+				//time has elapsed
 				return "-1", errors.New("Expired Value passed")
 			}
 			fmt.Println("line 241 ", res1)
-			
+
 		}
 		return res1, nil
-		
-	return "", nil
+
+		return "", nil
 	}
 	return "", nil
 }
 
-func keyValue(input []byte)([]string, error) {
+func keyValue(input []byte) ([]string, error) {
 	string1 := ""
 	string2 := ""
 	result := []string{}
@@ -289,22 +322,20 @@ func keyValue(input []byte)([]string, error) {
 	return result, nil
 }
 
-func timetracker(fn int, key string, value1 string,nowTime time.Time,expiryTime1 string )(string, error){ 
-	
+func timetracker(fn int, key string, value1 string, nowTime time.Time, expiryTime1 string) (string, error) {
+
 	string1, _ := executingFunction(0, key, value1)
 	fmt.Println("line 277", string1)
 	data = Data1{
-		value: value1,
+		value:      value1,
 		expiryTime: expiryTime1,
-		timeNow: nowTime, 
+		timeNow:    nowTime,
 	}
 
 	//fmt.Println("line 275 ",fn , key, value1 ,expiryTime1, string1, nowTime, &data)
-	timetracker1[key]=data
-	fmt.Println("Line 302 fn timetracker",key,  timetracker1[key])
+	timetracker1[key] = data
+	fmt.Println("Line 302 fn timetracker", key, timetracker1[key])
 	return "+OK\r\n", nil
 }
 
-
 //implement set function
-	
