@@ -141,20 +141,21 @@ func RESPParser(input []byte) (string, error) {
 			return "$" + strconv.Itoa(len(res12)) + "\r\n" + res12 + "\r\n", nil
 		} else if parsedData[i] == "ping" {
 			return "$4\r\nPONG\r\n", nil
-		} else if parsedData[i] == " " {
-			return "+OK\r\n", nil
-		} else if parsedData[i] != " " {
-			// parsed array has returned a value then
-			len1 := strconv.Itoa(len(parsedData[i]))
-			fmt.Println("line 101   ")
-			return "$" + len1 + "\r\n" + parsedData[i] + "\r\n", nil
+		} 
+		//else if parsedData[i] == " " {
+		//	return "+OK\r\n", nil
+		// } else if parsedData[i] != " " {
+		// 	// parsed array has returned a value then
+		// 	len1 := strconv.Itoa(len(parsedData[i]))
+		// 	fmt.Println("line 101   ")
+		// 	return "$" + len1 + "\r\n" + parsedData[i] + "\r\n", nil
 		}
 
 		if echoFlag == true {
 			response = response + string(parsedData[i+1])
 		}
 
-	}
+	//}=
 	//fmt.Println("Resp Parser response ", response)
 
 	a := len(parsedData) 
