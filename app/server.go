@@ -34,12 +34,6 @@ var data Data1
 func main() {
 	PORT = "6379"
 	//fmt.Println("OS args are ", os.Args, len(os.Args))
-	newPort, err := portReplica(os.Args)
-	newReplica("TCP", HOST1, newPort)
-
-	if err != nil {
-		fmt.Println("error in replicating ports")
-	}
 
 	listener, err := net.Listen(TYPE1, HOST1+":"+PORT)
 
@@ -59,6 +53,15 @@ func main() {
 		defer conn.Close()
 
 		go handleConn1(conn)
+
+		if len(os.Args) >= 2 {
+			newPort, err := portReplica(os.Args)
+			newReplica("TCP", HOST1, newPort)
+
+			if err != nil {
+				fmt.Println("error in replicating ports")
+			}
+		}
 
 	}
 
