@@ -78,7 +78,7 @@ func handleConn1(conn net.Conn) {
 		}
 
 		writeResponse, err := RESPParser(inputData)
-
+		fmt.Println("line 81 ", inputData)
 		if err != nil {
 			fmt.Println("Error to run function RESPParser")
 		}
@@ -141,9 +141,6 @@ func RESPParser(input []byte) (string, error) {
 			return "$" + strconv.Itoa(len(res12)) + "\r\n" + res12 + "\r\n", nil
 		} else if parsedData[i] == "ping" {
 			return "$4\r\nPONG\r\n", nil
-		} else if parsedData[i] == "port" {
-			fmt.Println("line 145 changing PORT ", parsedData[i+1])
-			PORT = parsedData[i+1]
 		} else if parsedData[i] == " " {
 			return "+OK\r\n", nil
 		} else if parsedData[i] != " " {
