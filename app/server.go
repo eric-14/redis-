@@ -78,7 +78,7 @@ func handleConn1(conn net.Conn) {
 		}
 
 		writeResponse, err := RESPParser(inputData)
-		fmt.Println("line 81 ", inputData)
+		
 		if err != nil {
 			fmt.Println("Error to run function RESPParser")
 		}
