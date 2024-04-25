@@ -93,8 +93,9 @@ func portReplica(input []string) (string, error) {
 	//func identifies a port number and can
 	//replicate the code to that port
 	for i := 0; i < len(input); i++ {
+		fmt.Println("line 96 func port Replica ", input[i])
 		if input[i] == "port" {
-			return input[i+1], nil
+			return input[i+2], nil
 		}
 	}
 	return "", nil
