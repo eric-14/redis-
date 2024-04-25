@@ -32,6 +32,7 @@ var data Data1
 
 func main() {
 	PORT = "6379"
+	fmt.Println("OS args are ", os.args, len(os.args))
 	listener, err := net.Listen(TYPE1, HOST1+":"+PORT)
 
 	if err != nil {
