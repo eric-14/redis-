@@ -110,7 +110,7 @@ func RESPParser(input []byte) (string, error) {
 
 	for i := 0; i < len(parsedData); i++ {
 		if parsedData[i] == "echo" {
-			echoFlag = true
+			response = response + string(parsedData[i+1])
 		} else if parsedData[i] == "set" {
 			fmt.Println("line 116 adding timetracker fn", len(parsedData))
 			if len(parsedData) > 3 {
@@ -151,9 +151,6 @@ func RESPParser(input []byte) (string, error) {
 		// 	return "$" + len1 + "\r\n" + parsedData[i] + "\r\n", nil
 		
 
-		if echoFlag == true {
-			response = response + string(parsedData[i+1])
-		}
 	}
 
 	//}=
