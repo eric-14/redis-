@@ -52,8 +52,6 @@ func main() {
 		}
 		defer conn.Close()
 
-		go handleConn1(conn)
-
 		if len(os.Args) >= 2 {
 			newPort, err := portReplica(os.Args)
 			newReplica("TCP", HOST1, newPort)
@@ -62,6 +60,8 @@ func main() {
 				fmt.Println("error in replicating ports")
 			}
 		}
+
+		go handleConn1(conn)
 
 	}
 
