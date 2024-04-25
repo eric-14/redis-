@@ -149,11 +149,12 @@ func RESPParser(input []byte) (string, error) {
 		// 	len1 := strconv.Itoa(len(parsedData[i]))
 		// 	fmt.Println("line 101   ")
 		// 	return "$" + len1 + "\r\n" + parsedData[i] + "\r\n", nil
-		}
+		
 
 		if echoFlag == true {
 			response = response + string(parsedData[i+1])
 		}
+	}
 
 	//}=
 	//fmt.Println("Resp Parser response ", response)
