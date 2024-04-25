@@ -12,9 +12,11 @@ import (
 
 const (
 	HOST1 = "localhost"
-	PORT1 = "6379"
+	
 	TYPE1 = "tcp"
 )
+var PORT string 
+
 
 var dictionary map[string]string
 
@@ -29,6 +31,7 @@ var data Data1
 
 
 func main() {
+	PORT = "6379"
 	listener, err := net.Listen(TYPE1, HOST1+":"+PORT1)
 
 	if err != nil {
@@ -138,7 +141,12 @@ func RESPParser(input []byte) (string, error) {
 			return "$" + strconv.Itoa(len(res12)) + "\r\n" + res12 + "\r\n", nil
 		} else if parsedData[i] == "ping" {
 			return "$4\r\nPONG\r\n", nil
-		} else if parsedData[i] == " " {
+		} else if parsedData[i] == "port" {
+			fmt.Println("line 145 changing PORT ", parsedData[i+1])
+			PORT = parsedData[i+1]
+		}
+		
+		else if parsedData[i] == " " {
 			return "+OK\r\n", nil
 		} else if parsedData[i] != " " {
 			// parsed array has returned a value then
