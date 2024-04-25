@@ -99,7 +99,7 @@ func RESPParser(input []byte) (string, error) {
 	reponsePrefix := "$"      // number of characters in the prefix are 6
 	responsePostfix := "\r\n" // number of characters in the postfix are 4
 	response := ""
-	echoFlag := false
+	// echoFlag := false
 
 	parsedData, err := ParseArray(input)
 
