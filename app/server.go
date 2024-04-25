@@ -61,6 +61,7 @@ func handleConn1(conn net.Conn) {
 	//fmt.Println("Handle connection function")
 
 	dictionary = make(map[string]string)
+	timetracker1 = make(map[string]Data1)
 
 	for {
 		inputData := make([]byte, 1024) // buffer to read multiple inputs
@@ -90,7 +91,7 @@ func RESPParser(input []byte) (string, error) {
 		***Arrays format is *<number-of-elements>\r\n<element-1>...<element-n>
 		*** Bulk Strings formart is $<length>\r\n<data>\r\n
 	*/
-	timetracker1 = make(map[string]Data1)
+	
 
 	reponsePrefix := "$"      // number of characters in the prefix are 6
 	responsePostfix := "\r\n" // number of characters in the postfix are 4
@@ -293,8 +294,6 @@ func timetracker(fn int, key string, value1 string,nowTime time.Time,expiryTime1
 		value: value1,
 		expiryTime: expiryTime1,
 		timeNow: nowTime, 
-		 
-		 
 	}
 
 	//fmt.Println("line 275 ",fn , key, value1 ,expiryTime1, string1, nowTime, &data)
