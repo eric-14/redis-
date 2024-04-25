@@ -7,10 +7,7 @@ import (
 	"net"
 	"os"
 	"strconv"
-<<<<<<< HEAD
 	"time"
-=======
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
 )
 
 const (
@@ -19,7 +16,6 @@ const (
 	TYPE1 = "tcp"
 )
 
-<<<<<<< HEAD
 var PORT string
 
 var dictionary map[string]string
@@ -34,12 +30,18 @@ type Data1 struct {
 var timetracker1 map[string]Data1
 var dataEmpty Data1
 var data Data1
-=======
-var dictionary map[string]string
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
 
 func main() {
 	PORT = "6379"
+
+	if len(os.Args) >= 2 {
+		newPort, err := portReplica(os.Args)
+		newReplica("tcp", HOST1, newPort)
+
+		if err != nil {
+			fmt.Println("error in replicating ports")
+		}
+	}
 	//fmt.Println("OS args are ", os.Args, len(os.Args))
 
 	listener, err := net.Listen(TYPE1, HOST1+":"+PORT)
@@ -53,29 +55,12 @@ func main() {
 	for {
 		conn, err := listener.Accept()
 
-<<<<<<< HEAD
-=======
-		conn, err := listener.Accept()
-
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
 		if err != nil {
 			fmt.Println("Failed to accept new clients in the TCP server ")
 			return
 		}
 		defer conn.Close()
 
-<<<<<<< HEAD
-		if len(os.Args) >= 2 {
-			newPort, err := portReplica(os.Args)
-			newReplica("TCP", HOST1, newPort)
-
-			if err != nil {
-				fmt.Println("error in replicating ports")
-			}
-		}
-
-=======
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
 		go handleConn1(conn)
 
 	}
@@ -89,8 +74,8 @@ func newReplica(TYPE string, HOST string, PORT string) int {
 	numberOfReplica++
 	if err != nil {
 		fmt.Println("Failed to open a TCP port", err)
-		log.Fatal(err)
-		os.Exit(1)
+		//log.Fatal(err)
+		//os.Exit(1)
 	}
 	defer listener.Close()
 	for {
@@ -110,15 +95,16 @@ func newReplica(TYPE string, HOST string, PORT string) int {
 func portReplica(input []string) (string, error) {
 	//func identifies a port number and can
 	//replicate the code to that port
-	fmt.Println("received input", input)
+	fmt.Println("received input", input, len(input))
 	foundPort := false
 	for i := 0; i < len(input); i++ {
 		fmt.Println("line 96 func port Replica ", input[i])
-		if input[i] == "port" {
+		if input[i] == "--port" {
 			foundPort = true
-			return input[i+2], nil
+			return input[i+1], nil
 		} else if foundPort == false {
-			return "", nil
+			//return "", nil
+			continue
 		}
 	}
 	return "", nil
@@ -129,10 +115,7 @@ func handleConn1(conn net.Conn) {
 	//fmt.Println("Handle connection function")
 
 	dictionary = make(map[string]string)
-<<<<<<< HEAD
 	timetracker1 = make(map[string]Data1)
-=======
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
 
 	for {
 		inputData := make([]byte, 1024) // buffer to read multiple inputs
@@ -166,7 +149,6 @@ func RESPParser(input []byte) (string, error) {
 	reponsePrefix := "$"      // number of characters in the prefix are 6
 	responsePostfix := "\r\n" // number of characters in the postfix are 4
 	response := ""
-<<<<<<< HEAD
 	// echoFlag := false
 
 	parsedData, err := ParseArray(input)
@@ -174,20 +156,10 @@ func RESPParser(input []byte) (string, error) {
 	fmt.Println("ParsedData 100", parsedData)
 	if err != nil {
 		fmt.Println("Error parsing the function clea ")
-=======
-	echoFlag := false
-
-	parsedData, err := ParseArray(input)
-
-	fmt.Println("ParsedData ", parsedData)
-	if err != nil {
-		fmt.Println("Error parsing the input bytes in function RESPParser ")
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
 	}
 
 	for i := 0; i < len(parsedData); i++ {
 		if parsedData[i] == "echo" {
-<<<<<<< HEAD
 			response = response + string(parsedData[i+1])
 		} else if parsedData[i] == "set" {
 			fmt.Println("line 116 adding timetracker fn", len(parsedData))
@@ -234,28 +206,6 @@ func RESPParser(input []byte) (string, error) {
 
 	a := len(parsedData)
 	//fmt.Println("Length of parsedData is len(parsedData[a-1]) ", len(parsedData[a-1]))
-=======
-			echoFlag = true
-		} else if parsedData[i] == "ping" {
-			return "$4\r\nPONG\r\n", nil
-		} else if parsedData[i] == " " {
-			return "+OK\r\n", nil
-		} else if parsedData[i] != " " {
-			// parsed array has returned a value then
-			len1 := strconv.Itoa(len(parsedData[0]))
-
-			return "$" + len1 + "\r\n" + parsedData[0] + "\r\n", nil
-		}
-
-		if echoFlag == true {
-			response = response + string(parsedData[i])
-		}
-
-	}
-	//fmt.Println("Resp Parser response ", response)
-	a := len(parsedData) // length of the array
-	fmt.Println("Length of parsedData is len(parsedData[a-1]) ", len(parsedData[a-1]))
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
 	result := reponsePrefix + strconv.Itoa(len(parsedData[a-1])) + "\r\n" + parsedData[a-1] + responsePostfix
 
 	fmt.Println("The result of the operation is ", result)
@@ -263,7 +213,6 @@ func RESPParser(input []byte) (string, error) {
 
 }
 
-<<<<<<< HEAD
 func ParseString(input1 []byte, count1 int) (string, error) {
 	//fmt.Println("function string values ", string(input))
 	// function to parse strings
@@ -288,93 +237,35 @@ func ParseString(input1 []byte, count1 int) (string, error) {
 		i++
 	}
 	return string1, nil
-=======
-func ParseString(input1 []byte) (string, error) {
-
-	//fmt.Println("function string values ", string(input))
-	// function to parse strings
-	string1 := ""
-	i := 0
-	for i < 20 {
-		//fmt.Println("Inside the FUNC parseString ", i)
-		if input1[0+i] == '$' {
-			//this is a bulk string
-			slen := string(rune(input1[i+1]))
-			len, _ := strconv.ParseInt(slen, 10, 64)
-			fmt.Println("Bulk string is TRUE", len)
-			// \r -3
-			// \n - 4
-			string1 = string(input1[4+i : 4+int(len)+i])
-			fmt.Println("Parse String String1", len, string1)
-			break
-		}
-		i++
-
-	}
-
-	return string1, nil
-
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
 }
 
 func ParseArray(input []byte) ([]string, error) {
 	//function to parse array elements
-<<<<<<< HEAD
 	element := []string{}
-=======
-
-	element := []string{}
-
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
 	if input[0] == '*' {
 		//this is an array
 		//fmt.Println("Inside function parsed Array len", string(rune(input[1])))
 		len1 := string(rune(input[1]))
-<<<<<<< HEAD
 		arrayLen, _ := strconv.ParseInt(len1, 10, 64)
 		//number of items in the array
-=======
-		len2, _ := strconv.ParseInt(len1, 10, 64) //number of items in the array
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
 
 		//pos 2 -- \r
 		//pos 3 -- \n
 		//j := 4
 
-<<<<<<< HEAD
 		for i := 0; i < int(arrayLen); i++ {
 			element1, err := ParseString(input[4:], i)
 
-=======
-		for i := 0; i < int(len2); i++ {
-			element1, err := ParseString(input[4+i*2:])
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
 			if err != nil {
 				fmt.Println("Failed to parse string ")
 			}
 			element = append(element, element1)
 
 		}
-<<<<<<< HEAD
-=======
-		//fmt.Println("inside func array array is ", element)
-
-		//}
-
-	} else {
-		res1, err := executingFunction(input)
-
-		if err != nil {
-			fmt.Println("Failed to execute function ")
-		}
-		return []string{res1}, nil
-		//return []string{}, errors.New("Inside ParseArray the passed byte does not follow redis encoding")
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
 	}
 	return element, nil
 }
 
-<<<<<<< HEAD
 func executingFunction(fn int, key string, value string) (string, error) {
 
 	if fn == 0 {
@@ -411,37 +302,6 @@ func executingFunction(fn int, key string, value string) (string, error) {
 		return res1, nil
 
 		return "", nil
-=======
-func executingFunction(input []byte) (string, error) {
-	//implement set function
-	i := 0
-	for i < len(input) {
-		if input[i] == 's' && input[i+1] == 'e' && input[i+2] == 't' {
-			// set function implementation
-			string1, err := keyValue(input[i+3:])
-			if err != nil {
-				fmt.Println("Failed to get Key")
-			}
-
-			// adding the key value pairs to db
-			dictionary[string1[0]] = string1[1]
-
-		} else if input[i] == 'g' && input[i+1] == 'e' && input[i+2] == 't' {
-			// implementing get function
-			getResult, err := keyValue(input[i+3:])
-			if err != nil {
-				fmt.Println("Failed to execute get operation")
-
-			}
-			key := getResult[0]
-			res1 := dictionary[key] // value in the dictionary
-
-			return res1, nil
-
-		}
-
-		i++
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
 	}
 	return "", nil
 }
@@ -472,7 +332,6 @@ func keyValue(input []byte) ([]string, error) {
 	result[1] = string2
 	return result, nil
 }
-<<<<<<< HEAD
 
 func timetracker(fn int, key string, value1 string, nowTime time.Time, expiryTime1 string) (string, error) {
 
@@ -491,5 +350,3 @@ func timetracker(fn int, key string, value1 string, nowTime time.Time, expiryTim
 }
 
 //implement set function
-=======
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
