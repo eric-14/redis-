@@ -32,7 +32,7 @@ var data Data1
 
 func main() {
 	PORT = "6379"
-	listener, err := net.Listen(TYPE1, HOST1+":"+PORT1)
+	listener, err := net.Listen(TYPE1, HOST1+":"+PORT)
 
 	if err != nil {
 		fmt.Println("Failed to open a TCP port", err)
@@ -144,9 +144,7 @@ func RESPParser(input []byte) (string, error) {
 		} else if parsedData[i] == "port" {
 			fmt.Println("line 145 changing PORT ", parsedData[i+1])
 			PORT = parsedData[i+1]
-		}
-		
-		else if parsedData[i] == " " {
+		} else if parsedData[i] == " " {
 			return "+OK\r\n", nil
 		} else if parsedData[i] != " " {
 			// parsed array has returned a value then
