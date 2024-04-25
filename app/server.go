@@ -65,7 +65,8 @@ func main() {
 }
 
 func newReplica(TYPE string, HOST string, PORT string) int {
-	fmt.Println("Replicating a new server")
+	fmt.Println("Replicating a new server ", TYPE, HOST, PORT)
+
 	listener, err := net.Listen(TYPE, HOST+":"+PORT)
 	numberOfReplica++
 	if err != nil {
