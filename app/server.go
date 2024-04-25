@@ -231,7 +231,7 @@ func executingFunction(fn int, key string, value string) (string, error){
 
 		
 		timerdata := timetracker1[key] 
-		fmt.Println("line 239 result from get fn", timedata)
+		fmt.Println("line 239 result from get fn", timerdata)
 		if timerdata != nil {
 			fmt.Println("line 241 time time tracker in fn get ", *timetracker1[key])
 			// if the data type has a time tracker then execute time function 
