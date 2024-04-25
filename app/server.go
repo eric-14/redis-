@@ -228,7 +228,7 @@ func executingFunction(fn int, key string, value string) (string, error){
 		// implementing get function
 		
 		res1 := dictionary[key] // value in the dictionary
-		
+		fmt.Println("line 231 ", res1)
 		dataEmpty := Data1{}
 		
 		timerdata := timetracker1[key] 
