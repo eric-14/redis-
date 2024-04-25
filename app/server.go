@@ -232,9 +232,9 @@ func executingFunction(fn int, key string, value string) (string, error){
 		dataEmpty := &Data1{}
 		timerdata := timetracker1[key] 
 		if timerdata != dataEmpty {
-			fmt.Println("line 241 time time tracker in fn get ", timetracker1[key])
+			fmt.Println("line 241 time time tracker in fn get ", *timetracker1[key])
 			// if the data type has a time tracker then execute time function 
-			timedata := timetracker1[key]  // time information about 
+			timedata := *timetracker1[key]  // time information about 
 			expTime,_ :=  strconv.Atoi(timedata.expiryTime)
 
 
