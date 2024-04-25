@@ -92,10 +92,15 @@ func newReplica(TYPE string, HOST string, PORT string) int {
 func portReplica(input []string) (string, error) {
 	//func identifies a port number and can
 	//replicate the code to that port
+	fmt.Println("received input", input)
+	foundPort := false
 	for i := 0; i < len(input); i++ {
 		fmt.Println("line 96 func port Replica ", input[i])
 		if input[i] == "port" {
+			foundPort = true
 			return input[i+2], nil
+		} else if foundPort == false {
+			return "", nil
 		}
 	}
 	return "", nil
