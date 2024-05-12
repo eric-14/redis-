@@ -3,45 +3,13 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io"
 	"net"
 	"os"
 	"strconv"
-<<<<<<< HEAD
 	"sync"
 	"time"
-=======
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
 )
-
-const (
-	HOST1 = "localhost"
-
-	TYPE1 = "tcp"
-)
-
-<<<<<<< HEAD
-type ReplicaInfo struct {
-	role               string
-	connected_slaves   int
-	master_replied     string
-	ports              []string // ports running servers
-	master_repl_offset int
-	//Key is the master or replica + connected_slaves[which is the ID of the server]
-	connObject map[string]*net.Conn // a map object used to track references to servers running
-
-	// second_repl_offset   int
-	// repl_backlog_active  int
-	// repl_backlog_size    int
-	// repl_backlog_histlne int
-}
-
-var PORT string
-
-var dictionary map[string]string
-var numberOfReplica int
-
-// controls details of replicas
-var replicainfo ReplicaInfo
 
 type Data1 struct {
 	value      string
@@ -49,450 +17,167 @@ type Data1 struct {
 	timeNow    time.Time
 }
 
+// array tracking servers in redis
+var replicainfo []*ReplicaInfo
+
+type ReplicaInfo struct {
+	role               string
+	connected_slaves   int
+	master_replied     string
+	port               string // ports running servers
+	master_repl_offset int
+	//Key is the master or replica + connected_slaves[which is the ID of the server]
+	connObject *net.Listener // a map object used to track references to servers running
+	flagMaster int           // 1 for maste, 0 for slave
+	// second_repl_offset   int
+	// repl_backlog_active  int
+	// repl_backlog_size    int
+	// repl_backlog_histlne int
+}
+
+var data Data1
 var timetracker1 map[string]Data1
 
-// var dataEmpty Data1
-var data Data1
-var wg1 sync.WaitGroup
-var wg4 sync.WaitGroup
+var host string = "localhost"
+var port string = "6379"
 
-var mx sync.Mutex
-=======
 var dictionary map[string]string
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
+var handleFuncCounter int
 
 func main() {
-	fmt.Println("inside main fn ")
+	var wg sync.WaitGroup
+	// var wgParseInput sync.WaitGroup
+	var listener net.Listener
+	var err error
 
-<<<<<<< HEAD
-	replicainfo.role = "master"
-	replicainfo.connected_slaves = numberOfReplica
-	replicainfo.master_replied = "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb"
-	replicainfo.master_repl_offset = 0
-	replicainfo.ports = make([]string, 20)
-	replicainfo.connObject = make(map[string]*net.Conn)
+	dictionary = make(map[string]string)
+	timetracker1 = make(map[string]Data1)
 
-	serverExits := false
-	masterPORT := "6379"
-	numberOfReplica = 0 // master position or ID is 0
+	params := os.Args
 
-	if len(os.Args) >= 2 {
-		go portReplica(os.Args, &mx)
-		// if err != nil {
-		// 	fmt.Println("error in replicating ports ")
-		// 	return
-		// }
+	//get the flag of the return type
+	//wgParseInput.Add(1)
+	ParseInput(params)
+	//wgParseInput.Wait()
 
-		//newReplica("tcp", HOST1, newPort)
+	//port = replicainfo[0]
 
-=======
-	if err != nil {
-		fmt.Println("Failed to open a TCP port", err)
-		log.Fatal(err)
-		os.Exit(1)
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
+	fmt.Println("line 59 func main length of replica info ->", len(replicainfo))
+
+	wg.Add(1)
+
+	/*
+		When running function handle conn we need to run multiple server
+		using a refence to listen switches listen from one server to another
+		Thus the previous server is replaced rather than letting it remain alive for the next operation
+
+		Solution
+
+		Instead of passing a reference to fn handleConn pass its value
+	*/
+
+	for i := 0; i < len(replicainfo); i++ {
+		fmt.Println("line 84 inside replica tracker ", replicainfo[i].connObject)
 	}
-	fmt.Println("Line 63 number of server ports after creating new replica  ", replicainfo.ports)
-
-<<<<<<< HEAD
-	for _, port := range replicainfo.ports {
-		//fmt.Println("line 80 server ports being tracked ", port, "masterPORT ", masterPORT)
-		if port == masterPORT {
-			fmt.Println("line 81 port already exists in server", port, masterPORT)
-			serverExits = true
-			//return
-		}
-
-	}
-
-	if serverExits == false {
-		// 	// starting server master
-		// 	if replicainfo.connObject["master0"] != nil {
-		listen7, err7 := net.Listen(TYPE1, HOST1+":"+"6381")
-
-		if err7 != nil {
-			fmt.Println("line 90 Failed to open a TCP port ", err7)
-			return
-		}
-		// 		defer listen7.Close()
-
-		// 	//adding master to server tracker
-		// 	//replicainfo.connObject[replicainfo.role+strconv.Itoa(replicainfo.connected_slaves)] = &listener
-		fmt.Println("line 72 ConnObject after logging the master ", replicainfo.connObject)
-		replicainfo.ports = append(replicainfo.ports, masterPORT)
-		fmt.Println("line 98 logging new server port ", masterPORT, replicainfo.ports)
-
-		//fmt.Println("Line 98")
-
-		wg1.Add(1)
-
-		go fnListen(&wg1, &listen7)
-
-		wg1.Wait()
-
-		//return
-=======
-		conn, err := listener.Accept()
+	if len(replicainfo) == 0 {
+		//parsed input failed
+		//creating master there was no input passed to the server
+		listener, err = net.Listen("tcp", host+":"+port)
 
 		if err != nil {
-			fmt.Println("Failed to accept new clients in the TCP server ")
+			fmt.Println("Line 14 error opening tcp port", err)
+			return
+		}
+		defer listener.Close()
+
+		//add a new replica info to the replica tracker
+
+		newMaster := ReplicaInfo{
+			role:               "master",
+			port:               port,
+			connObject:         &listener,
+			master_replied:     "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb",
+			master_repl_offset: 0,
+			flagMaster:         1,
+		}
+		replicainfo = append(replicainfo, &newMaster)
+
+	} else {
+		listener = *(*replicainfo[0]).connObject
+	}
+
+	fmt.Println("line 87 func main ", len(replicainfo), replicainfo[0].role)
+	//contact the master
+	n1, erro1 := handshake()
+	if erro1 != nil {
+		fmt.Println("error in handshake ", erro1, n1)
+	}
+
+	for {
+
+		conn, err1 := listener.Accept()
+		fmt.Println("line 112 ", conn)
+		if err1 != nil {
+			fmt.Println("Line 116 listener error ", err1)
+			//wg.Done()
 			return
 		}
 		defer conn.Close()
 
-		go handleConn1(conn)
-
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
-	}
-	if serverExits {
-		// assume its a master 6379
-		byte2 := make([]byte, 1024)
-		byte3 := make([]byte, 1024)
-
-		conn1 := replicainfo.connObject["master0"]
-		conn2 := replicainfo.connObject["slave0"]
-
-		(*conn1).Read(byte2)
-
-		for {
-			n1, err23 := (*conn2).Read(byte3)
-			if err23 != nil {
-				fmt.Println("line 128 failed to read data from slave object ", err23)
-				break
-			}
-			if n1 == 0 {
-				fmt.Println("line 133 slave object returned 0 bytes")
-				continue
-			}
-			if n1 > 0 {
-				fmt.Println("line 137 the following bytes read from the slave object ", string(byte3))
-			}
-		}
-		(*conn2).Write([]byte("*3\r\n$8\r\nREPLCONF\r\n$14\r\nlistening-port\r\n$4\r\n6380\r\n"))
-
-		fmt.Println("line 129 slave connection activated in main function ", string(byte3))
-
-		fmt.Println("line 119 master serverExists true ", string(byte2))
-
-		//(*conn1).Write([]byte("*1\r\n$4\r\nping\r\n"))
-
-		fmt.Println("Line 126 address of connection in handle conn ", (*conn1).LocalAddr().String())
-
-		//handleConn1((*conn1))
-		//(*conn1).Write([]byte("*1\r\n$4\r\nping\r\n"))
-
-		(*conn1).Write([]byte("*3\r\n$5\r\nPSYNC\r\n$1\r\n?\r\n$2\r\n-1\r\n"))
-		(*conn1).Close()
-		os.Exit(1)
+		go handleConn(&conn, &wg)
 
 	}
-	//wg1.Wait()
+
+	wg.Wait()
+	fmt.Println("line 55 existed function handleconn ", handleFuncCounter)
 
 }
 
-<<<<<<< HEAD
-func fnListenReplica(wg *sync.WaitGroup, listener *net.Conn) {
-	fmt.Println("line 136 func listen new replica. Listening for incoming connections to server")
-	//fmt.Println("line 137 fnListenReplica The function should respond to master with REPLCONF flag")
-	responseMaster := make([]byte, 1024)
-
-	for {
-		m, err := (*listener).Read(responseMaster)
-		defer (*listener).Close()
-		if err != nil {
-			fmt.Println("line 147 Failed to listen to read master Sleeping for 10 ", err)
-			return
-			time.Sleep(10)
-		}
-
-		masterResponded := false
-
-		if m > 0 {
-			// we received a response from the master
-			resp, err3 := ParseArray(responseMaster)
-			if err3 != nil {
-				fmt.Println("line 195 failed to parse bytes from master")
-			}
-			for _, elem := range resp {
-				// parse the elements in the array
-				if elem == "PONG" {
-					masterResponded = true
-					fmt.Println("line 200 master responded to  PING")
-				}
-			}
-			if masterResponded == true {
-				// master responded
-				// reply with message that
-				// (*listener).Write([]byte(message1))
-				// time.Sleep(100)
-				// (*listener).Write([]byte(message2))
-			}
-		}
-		wg.Done()
-		os.Exit(1)
-
-	}
-
-}
-func fnListen(wg *sync.WaitGroup, listener *net.Listener) {
-
-	fmt.Println("line 211 func listen. Listening for incoming connections to listener ")
-
-	//for {
-	conn, err := (*listener).Accept()
-
-	if err != nil {
-		fmt.Println("Failed to accept new clients in the TCP server ")
-		return
-	}
-	//defer conn.Close()
-	//go
-
-	wg4.Add(1)
-
-	go handleConn1(conn, &wg4)
-
-	wg4.Wait()
-	wg.Done()
-
-	//}
-
-}
-
-func newReplica(wg *sync.WaitGroup, TYPE string, HOST string, PORT string, mx *sync.Mutex) int {
+func handleConn(conn *net.Conn, wg *sync.WaitGroup) {
+	fmt.Println("line 131 func handleConn -> ")
+	handleFuncCounter++
 	defer wg.Done()
-	message1 := "*3\r\n$8\r\nREPLCONF\r\n$14\r\nlistening-port\r\n$4\r\n6380\r\n"
-	message2 := "*3\r\n$8\r\nREPLCONF\r\n$4\r\ncapa\r\n$6\r\npsync2\r\n"
-	fmt.Println("line 213 Fn newReplica  ", TYPE, HOST, PORT)
-
-	fmt.Println("line 198 new replica function ", replicainfo.ports)
-
-	for _, port := range replicainfo.ports {
-		if port == PORT {
-			//if port already exists the server should not try to recreate it
-			fmt.Println("Line 218 cant open port already opened returning to caller ", port, PORT)
-			return 1
-		}
-	}
-	listener1, err5 := net.Dial(TYPE, HOST+":"+"6379")
-	if err5 != nil {
-		fmt.Println("line 188 ", err5)
-		return -1
-	}
-	//defer listener1.Close()
-
-	mx.Lock()
-
-	replicainfo.connObject["master0"] = &listener1
-	fmt.Println("line 227 logged master to server ")
-
-	replicainfo.ports = append(replicainfo.ports, "6379")
-	replicainfo.ports = append(replicainfo.ports, PORT)
-
-	mx.Unlock()
-
-	numberOfReplica++
-	// adding a slave to the object tracker
-
-	//replicainfo.connObject[replicainfo.role+strconv.Itoa(replicainfo.connected_slaves+1)] = &listener
-
-	//adding replica information
-
-	// if server is successful log its information
-
-	fmt.Println("Line 240 fn newReplica logged port for new server ", replicainfo.ports)
-
-	//for {
-	message := "*1\r\n$4\r\nping\r\n"
-	for {
-		mx.Lock()
-		replicainfo.connObject["slave0"] = &listener1
-		mx.Unlock()
-
-		listener1.Write([]byte(message))
-
-		read12 := make([]byte, 1024)
-
-		m, err6 := listener1.Read(read12)
-
-		if err6 != nil {
-			fmt.Println("line 218 ", err6)
-		}
-		if m > 0 {
-			// fmt.Println("line 221 ", read12)
-			string23 := string(read12[1:5])
-			// if err7 != nil {
-			// 	fmt.Println("line 220 ", err7)
-			// }
-			listener1.Write([]byte(message1))
-
-			fmt.Println("line 223 ", string23)
-			input45 := make([]byte, 100)
-			m1, er1 := listener1.Read(input45)
-			if er1 != nil {
-				fmt.Println("line 234 response from server ", er1)
-			}
-			if m1 > 0 {
-
-				string30 := string(input45[1 : m1-2])
-				fmt.Println("line 245 response 2 from master ", m1, string30)
-				if string30 == "OK" {
-					listener1.Write([]byte(message2))
-				}
-
-			}
-		}
-
-		return 1
-	}
-
-	// var wg1 sync.WaitGroup
-	// wg1.Add(1)
-	//go fnListenReplica(&wg1, &listener1)
-
-	// if err != nil {
-	// 	fmt.Println("Failed to accept new clients in the TCP server ")
-	// 	return numberOfReplica
-	// }
-	// defer listener.Close()
-	//wg1.Wait()
-	fmt.Println("Line 271 Fn returning newReplica")
-
-	//go handleConn1(conn)
-	//}
-	// err2 := listener.Close()
-	// if err2 != nil {
-	// 	fmt.Println("line 173 error in closing listener in FN newReplica", err2)
-	// }
-	return 1
-}
-
-func portReplica(input []string, mx *sync.Mutex) (string, error) {
-	//func identifies a port number and can
-	//replicate the code to that port
-	fmt.Println("line 282 function portReplica")
-	//var wg3 sync.WaitGroup
-	fmt.Println("line 284 fn portReplica ", input)
-	foundPort := false
-	slaveport := ""
-	masterPort := ""
-	masterExists := false
-
-	var wg2 sync.WaitGroup
-	wg2.Add(1)
-
-	for i := 0; i < len(input); i++ {
-
-		if input[i] == "--port" {
-			foundPort = true
-			//slave port
-			fmt.Println("line 313 found slave port ", foundPort)
-			slaveport = slaveport + input[i+1]
-		}
-		if input[i] == "--replicaof" {
-			fmt.Println("line 297 --replicaof setting replicainfo to slave ")
-			mx.Lock()
-			replicainfo.role = "slave"
-			mx.Unlock()
-
-			//master port
-			masterPort = masterPort + input[i+2]
-			for _, port := range replicainfo.ports {
-				if port == masterPort {
-					fmt.Println("line 306 master Exists", port, masterPort)
-					masterExists = true
-					return "", nil
-				}
-			}
-		}
-
-		if masterExists {
-			fmt.Println("line 372 master exists in portReplica ")
-			go replicaPing("localhost", masterPort, mx)
-		} else {
-			fmt.Println("Line 308 adding a new replica first since one does not exist ")
-			newReplica(&wg2, "tcp", "localhost", slaveport, mx)
-			wg2.Wait()
-=======
-func handleConn1(conn net.Conn) {
-	//defer conn.Close()
-	//fmt.Println("Handle connection function")
-
-	dictionary = make(map[string]string)
+	// /string1 := ""
 
 	for {
-		inputData := make([]byte, 1024) // buffer to read multiple inputs
-		n, err := conn.Read(inputData)
-		if err != nil {
-			fmt.Println("Error reading bytes")
-			return
->>>>>>> 4b8418c4af96120b5f3595e6c0cdf5d3ae2b99ea
-		}
-		if n == 0 {
-			return
-		}
 
-		writeResponse, err := RESPParser(inputData)
+		fmt.Println("line 77 ALIVE")
+		inputByte := make([]byte, 300)
 
-		if err != nil {
-			fmt.Println("Error to run function RESPParser")
-		}
-		conn.Write([]byte(writeResponse))
+		//defer conn.Close()
 
-	}
+		n, err2 := (*conn).Read(inputByte)
 
-	//return string1, nil
+		if err2 != nil && err2 == io.EOF {
+			fmt.Println("Line 67 Finished reading input bytes")
 
-	// 	//fmt.Println("line 129 ", replicainfo.role)
-	// } else if foundPort == false {
-	// 	//return "", nil
-	// 	continue
-	// }
-	//}
-	if len(slaveport) > 0 {
-		wg2.Add(1)
-		go replicaStart("localhost", slaveport, &wg2)
-		wg2.Wait()
-	}
-
-	return slaveport, nil
-}
-
-func handleConn1(conn net.Conn, wg *sync.WaitGroup) {
-
-	//defer conn.Close()
-	//fmt.Println("Handle connection function")
-	inputData := make([]byte, 1024) // buffer to read multiple inputs
-	dictionary = make(map[string]string)
-	timetracker1 = make(map[string]Data1)
-
-	fmt.Println("Line 366 Fn handle connection ")
-	for {
-
-		n, err0r := conn.Read(inputData)
-		if err0r != nil {
-			fmt.Println("Line 368 Error reading bytes ", err0r)
-			wg.Done()
+			//wg.Done()
 			return
 		}
-		if n == 0 {
-			fmt.Println("line 372 number of bytes in handleConn ")
-			wg.Done()
-			return
-		}
+
 		if n > 0 {
-			writeResponse, err := RESPParser(inputData)
-			fmt.Println("line 380 write response ", writeResponse)
-			if err != nil {
-				fmt.Println("Error to run function RESPParser")
+			fmt.Println("Line 67 Finished reading input bytes")
+
+			string2, err3 := RESPParser(inputByte)
+
+			fmt.Println("Line 101 Func handleConn writing output byte ")
+			if err3 != nil {
+				fmt.Println("line 75 Function Resp Parser failed")
+				wg.Done()
+				return
 			}
-			conn.Write([]byte(writeResponse))
+			fmt.Println("Line 108 Responding to the string ->  ", string2)
+
+			(*conn).Write([]byte(string2))
 		}
+		// if n == 0 {
+		// 	fmt.Println("line 86 continue")
+		// 	continue
+		// }
 
 	}
 
 }
-
 func RESPParser(input []byte) (string, error) {
 	/*
 		@supporting arrays and string
@@ -513,6 +198,7 @@ func RESPParser(input []byte) (string, error) {
 	}
 
 	for i := 0; i < len(parsedData); i++ {
+		fmt.Println("line 105 parsedData", i, parsedData[i])
 		if parsedData[i] == "ECHO" {
 			response = response + string(parsedData[i+1])
 		} else if parsedData[i] == "set" || parsedData[i] == "SET" {
@@ -545,12 +231,27 @@ func RESPParser(input []byte) (string, error) {
 		} else if parsedData[i] == "INFO" {
 			//returning replication information about the server
 			//fmt.Println("line 213 found INFO")
-			dest, nil := ReplicaInformation()
+			flagReplica := 0 // get information on master service
+
+			//get information on slave service
+			if parsedData[i+1] == "command" {
+				return "", nil
+			}
+			if len(parsedData) >= 1 && len(replicainfo) > 0 {
+				//len replicainfo is used to track the number of replicas
+				//hence its used to validate the number of replica
+				//if there is a parameter to INFO flag then get the slaves
+				flagReplica = 1
+			}
+			fmt.Println("line 236 flagReplica  -> ", flagReplica)
+			fmt.Println("line 236 length of replicainfo --> ", len(replicainfo))
+
+			dest, nil := ReplicaInformation(len(replicainfo) - 1)
 
 			return dest, nil
 
 		}
-		//  else if parsedData[i] == "--replicaof" {
+		// else if parsedData[i] == "--replicaof" {
 		// 	//&& replicainfo.role == "slave"
 		// 	fmt.Println("line 245 PING Master")
 		// 	replicaPing(parsedData[i+1], parsedData[i+2])
@@ -574,7 +275,7 @@ func ParseString(input1 []byte, count1 int) (string, error) {
 	count2 := 0
 	i := 0
 	for {
-		if input1[i] == '$' {
+		if input1[i] == '$' || input1[i] == '+' {
 
 			if count1 == count2 {
 				j := i + 1
@@ -600,6 +301,7 @@ func ParseString(input1 []byte, count1 int) (string, error) {
 		}
 		i++
 	}
+
 	return string1, nil
 }
 
@@ -608,7 +310,7 @@ func ParseArray(input []byte) ([]string, error) {
 	element := []string{}
 	if input[0] == '*' {
 		//this is an array
-		//fmt.Println("Inside function parsed Array len", string(rune(input[1])))
+		fmt.Println("Inside function parsed Array len", string(rune(input[1])))
 		len1 := string(rune(input[1]))
 		arrayLen, _ := strconv.ParseInt(len1, 10, 64)
 		//number of items in the array
@@ -619,21 +321,39 @@ func ParseArray(input []byte) ([]string, error) {
 
 		for i := 0; i < int(arrayLen); i++ {
 			element1, err := ParseString(input[3:], i)
-			//	fmt.Println("line 314 ", input[4:])
 
 			if err != nil {
 				fmt.Println("Failed to parse string ")
 			}
+
 			element = append(element, element1)
+			fmt.Println("line 206 string returned by function ", element)
 
 		}
 	}
 	return element, nil
 }
 
+func timetracker(fn int, key string, value1 string, nowTime time.Time, expiryTime1 string) (string, error) {
+
+	string1, _ := executingFunction(0, key, value1)
+	fmt.Println("line 277", string1)
+	data = Data1{
+		value:      value1,
+		expiryTime: expiryTime1,
+		timeNow:    nowTime,
+	}
+
+	//fmt.Println("line 275 ",fn , key, value1 ,expiryTime1, string1, nowTime, &data)
+	timetracker1[key] = data
+	fmt.Println("Line 302 fn timetracker", key, timetracker1[key])
+	return "+OK\r\n", nil
+}
+
 func executingFunction(fn int, key string, value string) (string, error) {
 
 	if fn == 0 {
+		fmt.Println("line 296 assigning values ", key, value)
 		// set function implementation
 		// adding the key value pairs to db
 		dictionary[key] = value
@@ -698,265 +418,223 @@ func keyValue(input []byte) ([]string, error) {
 	return result, nil
 }
 
-func timetracker(fn int, key string, value1 string, nowTime time.Time, expiryTime1 string) (string, error) {
+func ReplicaInformation(flagIndex int) (string, error) {
 
-	string1, _ := executingFunction(0, key, value1)
-	fmt.Println("line 277", string1)
-	data = Data1{
-		value:      value1,
-		expiryTime: expiryTime1,
-		timeNow:    nowTime,
+	if flagIndex == 0 {
+
 	}
-
-	//fmt.Println("line 275 ",fn , key, value1 ,expiryTime1, string1, nowTime, &data)
-	timetracker1[key] = data
-	fmt.Println("Line 302 fn timetracker", key, timetracker1[key])
-	return "+OK\r\n", nil
-}
-
-//implement set function
-
-func ReplicaInformation() (string, error) {
-	fmt.Println("line 374 printing the role ", replicainfo.role)
-	string1 := "role:" + replicainfo.role
-	string2 := "master_replid:" + replicainfo.master_replied
-	string4 := "master_repl_offset:" + strconv.Itoa(replicainfo.master_repl_offset)
+	fmt.Println("line 374 printing the role ", replicainfo[flagIndex].role)
+	string1 := "role:" + replicainfo[flagIndex].role
+	string2 := "master_replid:" + replicainfo[flagIndex].master_replied
+	string4 := "master_repl_offset:" + strconv.Itoa(replicainfo[flagIndex].master_repl_offset)
 	//$" + strconv.Itoa(len(string1)) + "\r\n" + string1 + "\r\n" + "$" + strconv.Itoa(len(string2)) + "\r\n" + string2 + "\r\n" +
 	string3 := "$" + strconv.Itoa(len(string1+string2+string4)+2) + "\r\n" + string1 + "," + string2 + "," + string4 + "\r\n"
 	//fmt.Println("line 379 ", string3)
 	return string3, nil
+
 }
 
-func replicaPing(host string, port string, mx *sync.Mutex) (string, error) {
+func ParseInput(params []string) (int, *net.Listener, error) {
+	//Function to parse input from the os arguments
+	//defer wg.Done()
+
+	flagMaster := 0
+	var replicaListener *net.Listener
+
+	n := len(params)
+	if n > 0 {
+		for i := 0; i < len(params); i++ {
+			if params[i] == "--port" && n < 3 {
+				fmt.Println("line 386 inside func ParseInput creating master at port -> ", params[i+1])
+				var err error
+				newPort := params[i+1] // new port
+
+				replicaListener = new(net.Listener)
+
+				*replicaListener, err = net.Listen("tcp", "localhost"+":"+newPort)
+
+				//replicaListener = &listener1
+
+				if err != nil {
+					fmt.Println("line 435 opening server at -> ", newPort)
+					// wg.Done()
+					return flagMaster, nil, err
+
+				}
+				mainReplica := new(ReplicaInfo)
+
+				mainReplica = &ReplicaInfo{
+					role:               "master",
+					port:               params[i+1],
+					flagMaster:         1,
+					connObject:         replicaListener,
+					master_replied:     "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb",
+					master_repl_offset: 0,
+				}
+
+				//adding master information to replica tracker
+				replicainfo = append(replicainfo, mainReplica)
+				fmt.Println("line 426 added master to replica tracker ", params[i+1])
+
+				//fmt.Println("line 424 func ParseInput returning a replica")
+				//return 1, replicaListener, nil
+
+			}
+			if params[i] == "--replicaof" {
+				flagMaster = 1
+				var err1 error
+				masterReplica := new(ReplicaInfo)
+
+				slaveReplica := new(ReplicaInfo)
+
+				master := new(net.Listener)
+				slave := new(net.Listener)
+
+				slaveReplica = &ReplicaInfo{
+					role:               "slave",
+					port:               params[i-1],
+					flagMaster:         1,
+					connObject:         slave,
+					master_replied:     "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb",
+					master_repl_offset: 2,
+				}
+
+				// adding master information to replica tracker
+				// overwrite master information
+				//
+
+				replicainfo = append(replicainfo, slaveReplica)
+				fmt.Println("line 500 added new slave replica at port -> ", params[i-1])
+
+				fmt.Println("line 502 master at -> ", params[i+2])
+
+				*master, err1 = net.Listen("tcp", "localhost"+":"+params[i+2])
+
+				if err1 != nil {
+					fmt.Println("line 477 error creating localhost ", err1)
+					// wg.Done()
+					return 0, nil, err1
+				}
+
+				masterReplica = &ReplicaInfo{
+					role:               "master",
+					port:               params[i+2],
+					connObject:         master,
+					flagMaster:         0,
+					master_replied:     "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb",
+					master_repl_offset: 1,
+				}
+				//adding slave information to the replica server tracker
+
+				replicainfo = append(replicainfo, masterReplica)
+
+				//replicainfo[0] = mainReplica
+				// wg.Done()
+				return flagMaster, nil, nil
+			}
+		}
+
+	} else if n == 0 {
+		//there are no params parsed to function
+		// wg.Done()
+		return flagMaster, nil, nil
+	}
+	// wg.Done()
+
+	return flagMaster, replicaListener, nil
+
+}
+
+func handshake() (int, error) {
 	/*
-		Function that replicas use to ping master
+		Function to send handshake from Replica
+
 	*/
-	fmt.Println("line 457 logging servers inside map  tracker ", replicainfo.connObject)
-
-	mx.Lock()
-	conn := replicainfo.connObject["master0"]
-	//conn, err := net.Dial("tcp", host+":"+port)
-
-	replicainfo.ports = append(replicainfo.ports, port)
-	mx.Unlock()
-
-	fmt.Println("\n line 444 added a new port in replicaPIng", replicainfo.ports)
-	// if err != nil {
-	// 	fmt.Println("Falied to open server")
-	// }
-	//defer conn.Close()
-	message := "*1\r\n$4\r\nping\r\n"
-
-	// conn, err := (*Listener).Accept()
-	// if err != nil {
-	// 	fmt.Println("line 462 could not start connection to server ")
-	// }
-	defer (*conn).Close()
-	(*conn).Write([]byte(message))
-	//CRLF := "\r\n"
-	return port, nil
-
-	//return "*3\r\n$4\r\nping\r\n" + "$" + strconv.Itoa(len(host)) + CRLF + host + CRLF + "$" + strconv.Itoa(len(port)) + CRLF + port + CRLF, nil
-}
-
-func replicaStart(host string, port string, wg *sync.WaitGroup) {
-	/* function to create replicas
-	solving limitations of new replicas since it dials a master
-	*/
-	fmt.Println("line 618 creating new replicas")
-
-	var wg5 sync.WaitGroup
-	wg5.Add(1)
-
-	listener, err8 := net.Listen("tcp", host+":"+port)
-
-	if err8 != nil {
-		fmt.Println("line 624 error in opening server in port", err8)
-
-	}
-
-	conn, err := listener.Accept()
-
-	if err != nil {
-		fmt.Println("line 631 error in new connn ")
-	}
-	defer conn.Close()
-	(*wg).Done()
-	go handleConn1(conn, &wg5)
-	wg5.Wait()
-
-}
-
-func RESPParser(input []byte) (string, error) {
-	/*
-		@supporting arrays and string
-		***Arrays format is *<number-of-elements>\r\n<element-1>...<element-n>
-		*** Bulk Strings formart is $<length>\r\n<data>\r\n
-	*/
-
-	reponsePrefix := "$"      // number of characters in the prefix are 6
-	responsePostfix := "\r\n" // number of characters in the postfix are 4
-	response := ""
-	echoFlag := false
-
-	parsedData, err := ParseArray(input)
-
-	fmt.Println("ParsedData ", parsedData)
-	if err != nil {
-		fmt.Println("Error parsing the input bytes in function RESPParser ")
-	}
-
-	for i := 0; i < len(parsedData); i++ {
-		if parsedData[i] == "echo" {
-			echoFlag = true
-		} else if parsedData[i] == "ping" {
-			return "$4\r\nPONG\r\n", nil
-		} else if parsedData[i] == " " {
-			return "+OK\r\n", nil
-		} else if parsedData[i] != " " {
-			// parsed array has returned a value then
-			len1 := strconv.Itoa(len(parsedData[0]))
-
-			return "$" + len1 + "\r\n" + parsedData[0] + "\r\n", nil
-		}
-
-		if echoFlag == true {
-			response = response + string(parsedData[i])
-		}
-
-	}
-	//fmt.Println("Resp Parser response ", response)
-	a := len(parsedData) // length of the array
-	fmt.Println("Length of parsedData is len(parsedData[a-1]) ", len(parsedData[a-1]))
-	result := reponsePrefix + strconv.Itoa(len(parsedData[a-1])) + "\r\n" + parsedData[a-1] + responsePostfix
-
-	fmt.Println("The result of the operation is ", result)
-	return result, nil
-
-}
-
-func ParseString(input1 []byte) (string, error) {
-
-	//fmt.Println("function string values ", string(input))
-	// function to parse strings
-	string1 := ""
-	i := 0
-	for i < 20 {
-		//fmt.Println("Inside the FUNC parseString ", i)
-		if input1[0+i] == '$' {
-			//this is a bulk string
-			slen := string(rune(input1[i+1]))
-			len, _ := strconv.ParseInt(slen, 10, 64)
-			fmt.Println("Bulk string is TRUE", len)
-			// \r -3
-			// \n - 4
-			string1 = string(input1[4+i : 4+int(len)+i])
-			fmt.Println("Parse String String1", len, string1)
-			break
-		}
-		i++
-
-	}
-
-	return string1, nil
-
-}
-
-func ParseArray(input []byte) ([]string, error) {
-	//function to parse array elements
-
-	element := []string{}
-
-	if input[0] == '*' {
-		//this is an array
-		//fmt.Println("Inside function parsed Array len", string(rune(input[1])))
-		len1 := string(rune(input[1]))
-		len2, _ := strconv.ParseInt(len1, 10, 64) //number of items in the array
-
-		//pos 2 -- \r
-		//pos 3 -- \n
-		//j := 4
-
-		for i := 0; i < int(len2); i++ {
-			element1, err := ParseString(input[4+i*2:])
+	fmt.Println("line 541 sending the server pings ", len(replicainfo))
+	response := make([]byte, 300)
+	for i := 0; i < len(replicainfo); i++ {
+		if replicainfo[i].role == "slave" {
+			conn, err := net.Dial("tcp", "localhost"+":"+"6379")
 			if err != nil {
-				fmt.Println("Failed to parse string ")
+				fmt.Println("Line 544 failed to dial master ", err)
+				return 1, err
 			}
-			element = append(element, element1)
+			//defer conn.Close()
+			conn.Write([]byte("*1\r\n$4\r\nPING\r\n"))
+			n, err1 := conn.Read(response)
+			if err1 != nil {
+				fmt.Println("line 554 error reading response from master ", err1)
+			}
+			if n > 0 {
+				resp1 := string(response)
 
-		}
-		//fmt.Println("inside func array array is ", element)
+				//fmt.Println("line 558 master responding to string -> ", resp1)
 
-		//}
+				fmt.Println("line 561 received PONG command ", resp1)
+				_, err2 := conn.Write([]byte("*3\r\n$8\r\nREPLCONF\r\n$14\r\nlistening-port\r\n$4\r\n6380\r\n"))
+				if err2 != nil {
+					fmt.Println("line 562 Erorr in wrting replconf --> ", err2)
+				}
 
-	} else {
-		res1, err := executingFunction(input)
-
-		if err != nil {
-			fmt.Println("Failed to execute function ")
-		}
-		return []string{res1}, nil
-		//return []string{}, errors.New("Inside ParseArray the passed byte does not follow redis encoding")
-	}
-	return element, nil
-}
-
-func executingFunction(input []byte) (string, error) {
-	//implement set function
-	i := 0
-	for i < len(input) {
-		if input[i] == 's' && input[i+1] == 'e' && input[i+2] == 't' {
-			// set function implementation
-			string1, err := keyValue(input[i+3:])
-			if err != nil {
-				fmt.Println("Failed to get Key")
 			}
 
-			// adding the key value pairs to db
-			dictionary[string1[0]] = string1[1]
+			resp2 := make([]byte, 100)
+			n2, _ := conn.Read(resp2)
+			fmt.Println("line 569 2nd response -> ", resp2)
+			if n2 > 0 {
+				conn.Write([]byte("*3\r\n$8\r\nREPLCONF\r\n$4\r\ncapa\r\n$6\r\npsync2\r\n"))
+				fmt.Println("Line 565 responding with second REPLCONF")
+			}
 
-		} else if input[i] == 'g' && input[i+1] == 'e' && input[i+2] == 't' {
-			// implementing get function
-			getResult, err := keyValue(input[i+3:])
+			resp3 := make([]byte, 20)
+			n3, _ := conn.Read(resp3)
+			fmt.Println("line 579 3nd response -> ", resp3)
+			if n3 > 0 {
+				conn.Write([]byte("*3\r\n$5\r\nPSYNC\r\n$1\r\n?\r\n$2\r\n-1\r\n"))
+				fmt.Println("Line 582 responding with second REPLCONF")
+			}
+
+		} else if replicainfo[i].role == "master" {
+			// handshake on the master side
+			fmt.Println("line 587 replica master responding to master ")
+			listener := replicainfo[i].connObject
+			conn, err := (*listener).Accept()
+			defer conn.Close()
+
 			if err != nil {
-				fmt.Println("Failed to execute get operation")
+				fmt.Println("line 591 Failed to open conn master in handshake ", err)
+				return 0, nil
+			}
+
+			for i := 0; i < 3; i++ {
+				resp4 := make([]byte, 50)
+				_, err5 := conn.Read(resp4)
+				if err5 != nil {
+					fmt.Println("line 597 Failed to read bytes received by master ", err5)
+					continue
+
+				}
+				parsedData, _ := ParseArray(resp4)
+				fmt.Println("line 601 master received ", parsedData[0])
+				if len(parsedData) >= 1 {
+					if parsedData[0] == "PING" {
+						fmt.Println("Line 606 parsed master received PING")
+						conn.Write([]byte("$4\r\nPONG\r\n"))
+						//return 0, nil
+					} else if parsedData[0] == "REPLCONF" {
+						conn.Write([]byte("+OK\r\n"))
+					} else {
+						fmt.Println("Line 619 Received information is not part of handleShake ")
+						break
+						//return 1, nil
+					}
+				}
 
 			}
-			key := getResult[0]
-			res1 := dictionary[key] // value in the dictionary
-
-			return res1, nil
 
 		}
-
-		i++
 	}
-	return "", nil
-}
 
-func keyValue(input []byte) ([]string, error) {
-	string1 := ""
-	string2 := ""
-	result := []string{}
-	counter := 0
-	for i := 0; i < len(input); i++ {
-		/*
-			first value is key
-			second value is value
-		*/
-		if input[i] == ' ' {
-			counter++
-		}
+	return 0, nil
 
-		if counter < 1 && input[i] != ' ' {
-			string1 = string1 + string(input[i])
-
-		} else if counter >= 1 && input[i] != ' ' {
-			string2 = string2 + string(input[i])
-		}
-
-	}
-	result[0] = string1
-	result[1] = string2
-	return result, nil
 }
