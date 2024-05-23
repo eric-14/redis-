@@ -1,0 +1,23 @@
+respond to pings 
+
+
+When creating servers use new keywords to create them on the heap
+rather than on the stack where they will be overwitten once the function is out of scope 
+
+
+solved the previous bug of failing to reach replica in single replication stage 
+The tests require that the same communication channel be established and used for sending replica information 
+
+Source of problem 
+Did not establish connection with the replica during creation of communication port 
+Just created the communication ports and did not connect 
+
+How it was resolved 
+
+Resolved by creating a line of communication immediately port of communication was established. By using function Accept in listener object 
+
+This created the communication line with the replica object and then the masters object's reference was added to objectController 
+
+Next stage solve single replica propagation 
+
+T
